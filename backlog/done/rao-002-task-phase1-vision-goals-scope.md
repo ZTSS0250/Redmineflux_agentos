@@ -2,7 +2,7 @@
 - **Task ID**: rao-002-task-phase1-vision-goals-scope
 - **Title**: ROADMAP.md Phase 1a — Product Vision, Business Goals, Project Scope, Success Criteria & Assumptions
 - **Type**: task
-- **Status**: specification
+- **Status**: done
 - **Complexity**: EASY
 - **Created**: 2026-07-02
 - **Author**: Sheetal Sharma
@@ -104,4 +104,7 @@ Verdict: Approved. No HIGH/CRITICAL findings.
 
 ## Done
 
-*(Filled by developer/Claude once this task is reviewed and approved — moves this file to `backlog/done/`)*
+- **PR**: N/A — documentation-only task, committed directly to `main` per developer instruction (no application code, no PR review required)
+- **Merged**: 2026-07-02
+- **Release Notes entry**: `RELEASE_NOTES.md` updated
+- **Deliverable verification**: `VISION.md` confirmed to contain "Business Goals", "Project Scope", and "Assumptions & Constraints" sections at close-out, alongside the pre-existing "Product Vision" and "Success Criteria for v1" sections
