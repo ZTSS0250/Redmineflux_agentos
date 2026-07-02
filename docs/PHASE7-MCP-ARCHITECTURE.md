@@ -59,6 +59,8 @@ flowchart TD
 
 Layer 1 (Redmine's own authorization) and Layer 2 (agent tool allow-list) are both **denial-capable independently** — an agent with a tool in its allow-list still cannot act outside what the acting `User.current` is actually permitted to do in Redmine, and a user with full Redmine permissions still cannot make an agent call a tool outside that agent's declared allow-list. Neither layer is a superset of the other.
 
+**Who `User.current` is for Layer 1**: for a human-initiated call (SRS approval, a Pending Approvals confirmation), it's the real logged-in user's session — already the standing rule. For an **agent-initiated call** — anything originating from `AgentEngine::Runner` rather than a controller request, e.g. a scheduled health-check tick or a passive ticket-close reaction — there is no human session to inherit a user from, so it is the dedicated **AgentOS System user** (`docs/PHASE5-FOLDER-STRUCTURE.md`/`rao-015`'s Phase 10 specification), a non-admin, non-interactively-logged-in account added as a `Member` with a Role scoped to exactly the AgentOS permission set on every project where `:agentos` is enabled. This is not a superuser bypass — Layer 1 still meaningfully constrains the System user to that Role's grants, same as any other user.
+
 ---
 
 ## 4. Request/Response Contracts
