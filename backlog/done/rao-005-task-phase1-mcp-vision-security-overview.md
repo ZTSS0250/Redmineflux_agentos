@@ -2,7 +2,7 @@
 - **Task ID**: rao-005-task-phase1-mcp-vision-security-overview
 - **Title**: ROADMAP.md Phase 1d — MCP Vision & Security/Compliance Overview
 - **Type**: task
-- **Status**: specification
+- **Status**: done
 - **Complexity**: MEDIUM
 - **Created**: 2026-07-02
 - **Author**: Sheetal Sharma
@@ -106,4 +106,8 @@ Verdict: Approved. No unresolved HIGH/CRITICAL findings in spec text; both predi
 
 ## Done
 
-*(Filled by developer/Claude once this task is reviewed and approved — moves this file to `backlog/done/`)*
+- **PR**: N/A — documentation-only task, committed directly to `main` per developer instruction (no application code, no PR review required)
+- **Merged**: 2026-07-02
+- **Release Notes entry**: `RELEASE_NOTES.md` updated
+- **Deliverable verification**: `VISION.md` confirmed to contain the "MCP Vision" section, and `docs/SECURITY-COMPLIANCE-OVERVIEW.md` confirmed present at close-out (principles, data handled, v1/v2 compliance stance, threat model, relationship to other security artifacts)
+- **Carried-forward requirements** (not closed by this ticket, tracked for their respective future tasks): a build-time test asserting the Mock AI Provider makes zero outbound network calls (Phase 12 implementation), and the v1→v2 vendor/DPA review gate (tracked in `docs/PRODUCT-ROADMAP.md`, `rao-006`)

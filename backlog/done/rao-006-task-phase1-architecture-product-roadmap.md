@@ -2,7 +2,7 @@
 - **Task ID**: rao-006-task-phase1-architecture-product-roadmap
 - **Title**: ROADMAP.md Phase 1e — High-Level Architecture & Product Roadmap (v1 → v2 → v3)
 - **Type**: task
-- **Status**: specification
+- **Status**: done
 - **Complexity**: MEDIUM
 - **Created**: 2026-07-02
 - **Author**: Sheetal Sharma
@@ -106,4 +106,8 @@ Verdict: Approved. No HIGH/CRITICAL findings remain unresolved in spec text.
 
 ## Done
 
-*(Filled by developer/Claude once this task is reviewed and approved — moves this file to `backlog/done/`)*
+- **PR**: N/A — documentation-only task, committed directly to `main` per developer instruction (no application code, no PR review required)
+- **Merged**: 2026-07-02
+- **Release Notes entry**: `RELEASE_NOTES.md` updated
+- **Deliverable verification**: `docs/PRODUCT-ROADMAP.md` confirmed present at close-out, with the disambiguation banner, v1/v2/v3 sections, and checklist-style promotion gates all in place; reciprocal cross-link confirmed present at the top of `ROADMAP.md`
+- **Carried-forward requirements** (not closed by this ticket): the v1→v2 and v2→v3 promotion gates remain open checklists — they block future work, not this documentation task

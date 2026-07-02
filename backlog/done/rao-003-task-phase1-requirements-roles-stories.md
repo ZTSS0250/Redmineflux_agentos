@@ -2,7 +2,7 @@
 - **Task ID**: rao-003-task-phase1-requirements-roles-stories
 - **Title**: ROADMAP.md Phase 1b — Functional & Non-Functional Requirements, User Roles & Personas, User Stories
 - **Type**: task
-- **Status**: specification
+- **Status**: done
 - **Complexity**: EASY
 - **Created**: 2026-07-02
 - **Author**: Sheetal Sharma
@@ -103,4 +103,7 @@ Verdict: Approved. No HIGH/CRITICAL findings.
 
 ## Done
 
-*(Filled by developer/Claude once this task is reviewed and approved — moves this file to `backlog/done/`)*
+- **PR**: N/A — documentation-only task, committed directly to `main` per developer instruction (no application code, no PR review required)
+- **Merged**: 2026-07-02
+- **Release Notes entry**: `RELEASE_NOTES.md` updated
+- **Deliverable verification**: `docs/USER-ROLES-AND-STORIES.md` confirmed present at close-out, containing the 6-role table (§1) and 17 user stories (§2) cross-referenced to FR IDs

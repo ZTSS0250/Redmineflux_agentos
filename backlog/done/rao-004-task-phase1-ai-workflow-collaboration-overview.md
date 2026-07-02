@@ -2,7 +2,7 @@
 - **Task ID**: rao-004-task-phase1-ai-workflow-collaboration-overview
 - **Title**: ROADMAP.md Phase 1c — AI-Assisted Development Workflow & Multi-Agent Collaboration Overview
 - **Type**: task
-- **Status**: specification
+- **Status**: done
 - **Complexity**: EASY
 - **Created**: 2026-07-02
 - **Author**: Sheetal Sharma
@@ -98,4 +98,7 @@ Verdict: Approved. No HIGH/CRITICAL findings.
 
 ## Done
 
-*(Filled by developer/Claude once this task is reviewed and approved — moves this file to `backlog/done/`)*
+- **PR**: N/A — documentation-only task, committed directly to `main` per developer instruction (no application code, no PR review required)
+- **Merged**: 2026-07-02
+- **Release Notes entry**: `RELEASE_NOTES.md` updated
+- **Deliverable verification**: `VISION.md` confirmed to contain the "Multi-Agent Collaboration Overview" section at close-out, linking to `docs/AGENTS.md` and `WORKFLOW.md` §8-9 rather than restating their content
