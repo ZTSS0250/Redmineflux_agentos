@@ -23,7 +23,7 @@ See [WORKFLOW.md](WORKFLOW.md) for the end-to-end workflow narrative (how these 
 | 7 | MCP Architecture | Docs | ✅ Fully covered | `rao-001` (baseline) + `rao-012` (deepened: Tool Registry, Permission Model, Request/Response Contracts, Error Handling) |
 | 8 | Workflow Engine & Orchestration | Docs | ✅ Fully covered | `rao-013` (includes Pause/Resume Logic, previously deferred) |
 | 9 | UI/UX Specification | Docs | ✅ Fully covered | `rao-001` (baseline) + `rao-014` (deepened: Information Architecture, 2 new pages, 2 drill-down pages, Dashboard Designs) |
-| 10 | Plugin Skeleton | Code | 📋 Spec'd, blocked on 5 open questions (`docs/PHASE1-SPECIFICATION.md` §7) | `rao-015` (spec only — not implemented) |
+| 10 | Plugin Skeleton | Code | 📋 Spec'd, unblocked (5 open questions resolved 2026-07-02) | `rao-015` (spec only — not implemented) |
 | 11 | Database Migrations | Code | 📋 Spec'd | `rao-016` (spec only — not implemented) |
 | 12 | Mock AI Provider Implementation | Code | 📋 Spec'd | `rao-017` (spec only — not implemented) |
 | 13 | MCP Implementation | Code | 📋 Spec'd | `rao-018` (spec only — not implemented) |
@@ -45,7 +45,9 @@ See [WORKFLOW.md](WORKFLOW.md) for the end-to-end workflow narrative (how these 
 
 **Phases 10-16 specified, not implemented (2026-07-02)**: `rao-015` through `rao-021` give every implementation phase a full Planning/Specification (with a Code Changes table)/Test Cases/Quality-Gates ticket — but per the Golden Rule ("no code before specification... no merge before tests pass"), **none of these tickets have been implemented**. They sit gate-approved in `backlog/specification/`, ready for whenever the developer says "implement this," starting with `rao-015` (Phase 10, Plugin Skeleton) — which is itself still blocked on the 5 open questions in `docs/PHASE1-SPECIFICATION.md` §7.
 
-**Next action**: either (a) resolve the 5 open questions so `rao-015` can actually be implemented, or (b) continue refining specifications. Counter advanced to 22.
+**5 open questions resolved (2026-07-02)**: `docs/PHASE1-SPECIFICATION.md` §7's five questions — the standing blocker on `rao-015` (Phase 10) — are now all answered. Background job backend and MCP transport resolved by precedent from the sibling `redmineflux_devops` plugin (plain adapter-agnostic `ActiveJob`; in-process `Mcp::Executor` plus REST exposure for the shared external MCP server, no standalone AgentOS MCP server); confirmation UX resolved by already-built consensus (Pending Approvals queue on the Agent Dashboard); LLM provider given a stated non-blocking default recommendation (Anthropic Claude, for v2 only — v1 is Mock-only and unaffected); code-writing-agent scope reservation resolved as "no reservation" (YAGNI — a dedicated future security spec adds its own schema/permissions when actually scoped, per `docs/PRODUCT-ROADMAP.md`'s v2→v3 gate). `rao-015` is now unblocked and ready for implementation whenever the developer chooses.
+
+**Next action**: implement `rao-015` (Phase 10, Plugin Skeleton) — the first phase with no remaining blocker — or continue refining later-phase specifications first. Counter remains at 22 (no new ticket opened by this resolution).
 
 ---
 

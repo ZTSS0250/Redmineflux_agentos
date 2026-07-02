@@ -2,7 +2,7 @@
 
 **Project Key**: `rao`
 **Next Task Number**: See `backlog/.counter` (current: 22)
-**Status**: See [ROADMAP.md](ROADMAP.md) for the full 16-phase roadmap and per-phase status. **All 16 phases now have a specification.** Phases 1-9 (docs) are fully covered and closed — 14 tickets in `backlog/done/`. Phases 10-16 (code) are fully spec'd as 7 gate-approved tickets in `backlog/specification/`, but **not implemented** — no application code exists yet. `rao-015` (Phase 10) is additionally blocked on the 5 open questions in `docs/PHASE1-SPECIFICATION.md` §7.
+**Status**: See [ROADMAP.md](ROADMAP.md) for the full 16-phase roadmap and per-phase status. **All 16 phases now have a specification.** Phases 1-9 (docs) are fully covered and closed — 14 tickets in `backlog/done/`. Phases 10-16 (code) are fully spec'd as 7 gate-approved tickets in `backlog/specification/`, but **not implemented** — no application code exists yet. The 5 open questions in `docs/PHASE1-SPECIFICATION.md` §7 that blocked `rao-015` (Phase 10) are now **resolved** — `rao-015` is unblocked and ready to implement.
 
 ---
 
@@ -35,7 +35,7 @@ Read in this order: [VISION.md](VISION.md) → [docs/PHASE1-SPECIFICATION.md](do
 
 `rao-001` retroactively satisfies ROADMAP.md Phases 7 and 9 in full, and *partially* satisfies Phase 6 (see ROADMAP.md's coverage note — still open). `rao-002`..`rao-006` together now fully and individually satisfy every Phase 1 deliverable. `rao-007` fully satisfies Phase 2, and `rao-009` fully satisfies Phase 4 (both superseding the earlier "partial"/"retroactive" status).
 
-**Blocking Phase 10 (plugin skeleton)**: 5 open questions in `docs/PHASE1-SPECIFICATION.md` §7 (LLM provider, background job backend, MCP transport, confirmation UX, code-writing-agent scope reservation). Note: `rao-007`'s Background Job Strategy effectively answers question #2 by precedent (plain `ActiveJob`, adapter-agnostic), but the question is formally still open pending developer sign-off.
+**Phase 10 (plugin skeleton) is no longer blocked**: the 5 open questions in `docs/PHASE1-SPECIFICATION.md` §7 (LLM provider, background job backend, MCP transport, confirmation UX, code-writing-agent scope reservation) are all resolved as of 2026-07-02 — see that section for each resolution and rationale.
 
 ## Current: Phase 3 — Mock AI Provider Foundation (fully covered AND closed)
 
@@ -73,7 +73,7 @@ This closes every documentation phase in ROADMAP.md (1-9). `rao-001` no longer n
 
 | ID | Title | Status | Complexity |
 |----|-------|--------|------------|
-| rao-015 | Phase 10 — Plugin Skeleton | `backlog/specification/` — spec-only, blocked on 5 open questions | HIGH |
+| rao-015 | Phase 10 — Plugin Skeleton | `backlog/specification/` — spec-only, unblocked | HIGH |
 | rao-016 | Phase 11 — Database Migrations | `backlog/specification/` — spec-only | HIGH |
 | rao-017 | Phase 12 — Mock AI Provider Implementation | `backlog/specification/` — spec-only | HIGH |
 | rao-018 | Phase 13 — MCP Implementation | `backlog/specification/` — spec-only | HIGH |
@@ -87,13 +87,13 @@ This closes every documentation phase in ROADMAP.md (1-9). `rao-001` no longer n
 
 ## Upcoming
 
-- Resolve the 5 open questions in `docs/PHASE1-SPECIFICATION.md` §7 — the only remaining blocker before `rao-015` (Phase 10) can actually be implemented
-- Implement `rao-015` through `rao-021` in order (each depends on the previous — see each ticket's Planning section)
+- Implement `rao-015` through `rao-021` in order (each depends on the previous — see each ticket's Planning section) — `rao-015` is unblocked and can start now
 
 ---
 
 ## Changelog
 
+- 2026-07-02 — Resolved all 5 open questions in `docs/PHASE1-SPECIFICATION.md` §7, unblocking `rao-015` (Phase 10, Plugin Skeleton): **LLM provider** — not a v1 blocker (Mock-only); Anthropic Claude recorded as the non-binding default recommendation for v2. **Background job backend** — plain adapter-agnostic `ActiveJob`, already implemented in `rao-007`'s design by `redmineflux_devops` precedent. **MCP transport** — in-process `Mcp::Executor` (already designed, `rao-012`) plus REST exposure under `/agentos/...` for the same shared external "Redmineflux MCP server" `redmineflux_devops` already uses — no second, standalone MCP server. **Confirmation UX** — Pending Approvals queue on the Agent Dashboard, formally closing what every UI document already assumed since `rao-001`. **Code-writing-agent scope reservation** — explicitly not reserved now (YAGNI); a future dedicated security spec adds its own schema/permissions when actually scoped, per `docs/PRODUCT-ROADMAP.md`'s v2→v3 gate. Updated `docs/PHASE1-SPECIFICATION.md` §7-§8, `rao-015`, and `ROADMAP.md` to reflect the resolution. `rao-015` is now ready for implementation whenever the developer chooses — no remaining decision blocks it.
 - 2026-07-02 — Revised `rao-015` (Phase 10, Plugin Skeleton) before implementation: a follow-up review found a genuinely missing design decision — no document ever specified whose `User.current` an autonomous, non-human-triggered agent action uses (`agent_runs` has no `user_id` column). Resolved by introducing a dedicated **AgentOS System user** (`agentos_system`) — non-admin, cannot log in interactively, added as a project `Member` with a Role scoped to exactly the AgentOS permission set on module enablement — used as `actor:` for every agent-initiated MCP call, never a superuser bypass. Also fixed two smaller consistency gaps: routes must scope the REST API under `/agentos` with `defaults: { format: 'json' }` (matching `redmineflux_devops` precedent), and `init.rb` must not use Redmine's built-in plugin settings mechanism (would create a second, parallel config system alongside the already-designed `Configuration::Store`). Cross-referenced into `docs/PHASE7-MCP-ARCHITECTURE.md` §3's Permission Model so the two documents stay consistent. Logged as a transparent Gate 1/2/3 revision pass in `rao-015`, matching the same discipline used for `rao-008`'s revision.
 - 2026-07-02 — Specified all remaining phases: closed `rao-010` (Phase 5, Folder Structure), `rao-011` (Phase 6 expansion, full per-agent detail for 17 agents), `rao-012` (Phase 7 deepened, MCP Tool Registry/Permission Model/Contracts/Error Handling), `rao-013` (Phase 8, including the previously-deferred **Pause/Resume Logic** — a scheduling gate via the `configurations` table, not a new agent-run state), and `rao-014` (Phase 9 deepened, Information Architecture + Prompt Library + Settings + Sprint Planner/Agent Monitoring drill-downs) — all five moved to `backlog/done/`, completing every ROADMAP.md documentation phase (1-9). Then specified all seven implementation phases as full tickets with Code Changes tables — `rao-015` (Phase 10, Plugin Skeleton, still blocked on the 5 open questions), `rao-016` (Phase 11, Database Migrations), `rao-017` (Phase 12, Mock Provider Implementation), `rao-018` (Phase 13, MCP Implementation), `rao-019` (Phase 14, Multi-Agent Orchestration — where every prior carried-forward requirement converges), `rao-020` (Phase 15, UI Implementation), `rao-021` (Phase 16, Enterprise Readiness) — all seven stay in `backlog/specification/`, gate-approved but unimplemented, per the Golden Rule. Counter advanced to 22. All 16 ROADMAP.md phases now have a specification.
 - 2026-07-02 — Closed `rao-009`: moved `backlog/specification/rao-009-task-phase4-database-design.md` → `backlog/done/`, Status set to `done`, Done section filled. `docs/PHASE4-DATABASE-DESIGN.md` re-verified present at close-out. `backlog/specification/` is now empty again — all nine tickets across Phase 1, 2, 3, and 4 are closed in `backlog/done/`.

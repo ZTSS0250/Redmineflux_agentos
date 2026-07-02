@@ -14,6 +14,8 @@
 
 **Description**: First implementation phase — generates the plugin skeleton per [docs/PHASE5-FOLDER-STRUCTURE.md](../../docs/PHASE5-FOLDER-STRUCTURE.md), with no business logic. This ticket specifies exactly what Phase 10 will create; it does not create it. **This ticket cannot move to `done` until code is written, tested against a running Redmine instance, and the developer confirms — none of which is possible in this environment.**
 
+**Unblocked (2026-07-02)**: the 5 open questions in `docs/PHASE1-SPECIFICATION.md` §7 that previously blocked this ticket are now resolved — background job backend and MCP transport by precedent (`redmineflux_devops`), confirmation UX by already-built consensus across every UI document, LLM provider by a stated (non-blocking) default recommendation, and code-writing-agent scope reservation by explicit decision (no reservation). This ticket is now blocked only on the ordinary "no code before spec, no merge before tests pass" constraint — i.e. it is ready to implement whenever the developer chooses to, not waiting on any further decision.
+
 **Goal**: A gate-approved Code Changes table detailed enough that "implement rao-015" is an unambiguous instruction whenever the developer is ready to begin actual coding.
 
 **Objectives**:
@@ -37,7 +39,7 @@
 
 **Complexity**: HIGH — not because the skeleton itself is complex, but because it's the first code this plugin will ever contain, and every naming/registration mistake here (permission keys, route names, menu hook points) would ripple through every later phase.
 
-**Reason**: Matches CLAUDE.md's own Phase Roadmap table (`docs/PHASE1-SPECIFICATION.md` §8): Phase 10 is explicitly gated on the 5 open questions in §7 being answered first.
+**Reason**: `docs/PHASE1-SPECIFICATION.md` §7 originally gated this phase on 5 open questions — all five are now resolved (see Planning above); this remains HIGH complexity because it's the first code the plugin will contain, not because any decision remains outstanding.
 
 ### Code Changes
 
@@ -53,7 +55,7 @@
 
 ### Implementation Notes
 
-- **Blocked, not just sequenced, on the 5 open questions** (`docs/PHASE1-SPECIFICATION.md` §7): LLM provider choice affects nothing at skeleton stage (Mock only, per `docs/PHASE3-MOCK-AI-PROVIDER-FOUNDATION.md`), but background job backend, MCP transport, and confirmation UX all affect route/initializer shape and must be answered before this ticket is actually implemented, not just specified.
+- **Previously blocked on the 5 open questions, now resolved** (`docs/PHASE1-SPECIFICATION.md` §7): background job backend (plain `ActiveJob`, `rao-007`), MCP transport (in-process `Mcp::Executor` + REST exposure for the shared external MCP server, matching `redmineflux_devops`), and confirmation UX (Pending Approvals queue on Agent Dashboard, already built into every UI doc) directly shape this ticket's routes/initializer and are now settled. LLM provider and code-writing-agent scope reservation don't affect this ticket's shape at all (Mock-only in v1; no reservation made).
 - **No business logic is a hard rule, not a suggestion**: every method body in this phase is either absent, a association/validation declaration, or a stub — Gate 1 review of the actual implementation must reject any real logic sneaking into "skeleton" work.
 - **`project_module :agentos` is opt-in per project, disabled by default** — matching standard Redmine plugin convention and the "additive to human workflows, never a silent replacement" rule (CLAUDE.md Rules) — AgentOS never appears in a project until a project admin explicitly enables it in Settings > Modules.
 - **No Redmine built-in plugin settings block**: Redmine's `Redmine::Plugin.register` supports a classic `settings partial:`/`settings default:` mechanism (the "Configure" link most plugins use) — AgentOS deliberately does **not** use it, since `Configuration::Store` (Phase 2 §B.6, backed by `redmineflux_agentos_configurations`) is already the fully-designed configuration system, with project-override precedence and explicit-invalidation caching that the built-in mechanism doesn't provide. Using both would create two parallel, inconsistent config systems — a common but avoidable mistake when a developer defaults to Rails/Redmine's most familiar pattern out of habit. The Settings admin page (`docs/PHASE9-UI-UX-SPECIFICATION.md` §4.2) is a custom AgentOS controller/view reading and writing `Configuration::Store`, not Redmine's plugin-settings partial.
@@ -83,7 +85,7 @@ Every design document so far (`docs/MCP-TOOLS.md`, `docs/PHASE2-CORE-TECHNICAL-A
 
 **Scope**: Plugin boots cleanly, no business logic present, all routes/permissions/menus registered correctly.
 
-**Pre-conditions**: A running Redmine 5.x/6.x instance; the 5 open questions in `docs/PHASE1-SPECIFICATION.md` §7 answered.
+**Pre-conditions**: A running Redmine 5.x/6.x instance. (The 5 open questions in `docs/PHASE1-SPECIFICATION.md` §7 are resolved — no longer a pre-condition.)
 
 **QA Steps**: 1. Install plugin. 2. Run migrations (none exist yet at this phase — `rao-016` follows). 3. Confirm boot, permissions, menus, empty pages render without 500s.
 
@@ -100,7 +102,7 @@ Date: 2026-07-02 | Status: approved (docs-scope, code-level Gate 1 deferred to i
 
 | # | Severity | Finding | Location in Spec | Resolution |
 |---|----------|---------|-----------------|------------|
-| 1 | HIGH | This ticket lists implementation actions but cannot itself be executed while the 5 open questions remain unanswered | Planning | Resolved by stating explicitly: this ticket is gate-approved *as a specification*; its `[ ]` (unchecked) objectives reflect that implementation has not started, unlike doc-only tickets whose objectives were checked at authoring time |
+| 1 | HIGH | This ticket lists implementation actions but could not previously be executed while the 5 open questions remained unanswered | Planning | **Resolved (2026-07-02)** — all 5 questions are now answered in `docs/PHASE1-SPECIFICATION.md` §7; this ticket is gate-approved *as a specification* and is now unblocked for implementation whenever the developer chooses. Its `[ ]` (unchecked) objectives still reflect that implementation has not started, unlike doc-only tickets whose objectives were checked at authoring time |
 
 **Revision pass (2026-07-02, before implementation begins)** — a follow-up review found a genuinely missing design decision, not previously caught:
 
@@ -109,7 +111,7 @@ Date: 2026-07-02 | Status: approved (docs-scope, code-level Gate 1 deferred to i
 | 2 | HIGH | No document (`docs/MCP-TOOLS.md`, `docs/PHASE2-CORE-TECHNICAL-ARCHITECTURE.md` §B.8) ever specified *whose* `User.current` an autonomous, non-human-triggered agent action uses — `agent_runs` has no `user_id` column, so there was no way to answer this without a new decision | Specification, "AgentOS System User" | Resolved — a dedicated, non-admin, non-interactively-logged-in `agentos_system` Redmine user is provisioned and added as a project `Member` with a scoped Role on module enablement; used as `actor:` for every agent-initiated (non-human-request) MCP call |
 | 3 | MEDIUM | Routes and `init.rb` had no explicit convention preventing two parallel configuration systems (Redmine's built-in plugin settings vs. the already-designed `Configuration::Store`) | Implementation Notes | Resolved — explicit rule: no `settings partial:`/`settings default:` block; the Settings admin page reads/writes `Configuration::Store` exclusively |
 
-Verdict: Approved as a specification, pending developer answers to the 5 open questions before implementation begins. The revision-pass findings are incorporated into the specification, not left as separate follow-up notes.
+Verdict: Approved as a specification. **The 5 open questions are now resolved (see Planning) — this ticket is ready for implementation whenever the developer chooses to begin.** The revision-pass findings are incorporated into the specification, not left as separate follow-up notes.
 
 ### Gate 2 — Security & Performance Review
 Date: 2026-07-02 | Status: approved (docs-scope)
