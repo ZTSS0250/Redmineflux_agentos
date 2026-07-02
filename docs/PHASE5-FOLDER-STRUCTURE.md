@@ -61,7 +61,7 @@ This matches the top-level shape already committed to in `CLAUDE.md`'s "Director
 
 | Path | Contents | Traces back to |
 |---|---|---|
-| `app/models/redmineflux_agentos/` | One AR model per table in [docs/DATABASE-SCHEMA.md](DATABASE-SCHEMA.md) — `agent.rb`, `agent_run.rb`, `agent_memory.rb`, `conversation.rb`, `message.rb`, `project_plan.rb`, `release.rb`, `sprint.rb`, `ai_task.rb`, `dependency.rb`, `prompt_template.rb`, `knowledge_base_entry.rb`, `execution_log.rb`, `mcp_tool_call.rb`, `token_usage.rb`, `cost_tracking.rb`, `configuration.rb`, `audit_log.rb` | `docs/DATABASE-SCHEMA.md` |
+| `app/models/` (flat, not namespaced) | One AR model per table in [docs/DATABASE-SCHEMA.md](DATABASE-SCHEMA.md), matching CLAUDE.md's `RedminefluxAgentos*` flat class-naming convention exactly — `redmineflux_agentos_agent.rb` (class `RedminefluxAgentosAgent`), `redmineflux_agentos_agent_run.rb`, `redmineflux_agentos_agent_memory.rb`, `redmineflux_agentos_conversation.rb`, `redmineflux_agentos_message.rb`, `redmineflux_agentos_project_plan.rb`, `redmineflux_agentos_release.rb`, `redmineflux_agentos_sprint.rb`, `redmineflux_agentos_ai_task.rb`, `redmineflux_agentos_dependency.rb`, `redmineflux_agentos_prompt_template.rb`, `redmineflux_agentos_knowledge_base_entry.rb`, `redmineflux_agentos_execution_log.rb`, `redmineflux_agentos_mcp_tool_call.rb`, `redmineflux_agentos_token_usage.rb`, `redmineflux_agentos_cost_tracking.rb`, `redmineflux_agentos_configuration.rb`, `redmineflux_agentos_audit_log.rb`. **Correction (rao-015 implementation, 2026-07-02)**: an earlier version of this table showed a `redmineflux_agentos/` subdirectory, which would imply namespaced `RedminefluxAgentos::` model classes — inconsistent with CLAUDE.md's explicit flat-naming convention (`RedminefluxAgentosAgent`, not `RedminefluxAgentos::Agent`). Fixed here to match what CLAUDE.md actually mandates and what `rao-015` actually implemented. | `docs/DATABASE-SCHEMA.md` |
 | `app/controllers/redmineflux_agentos/` | Chat/wizard, requirement review, dashboards (agent/dependency/release/token/cost/execution), admin (agents/prompts/MCP tools/config), REST API controllers | `docs/UI-WIREFRAMES.md`, `docs/PHASE1-SPECIFICATION.md` §4-§5 |
 | `app/views/redmineflux_agentos/` | ERB templates, one directory per controller | `docs/UI-WIREFRAMES.md` |
 | `app/helpers/redmineflux_agentos/` | View helpers (dashboard formatting, status badges) | — |
@@ -204,8 +204,10 @@ Boot-time responsibilities (all deferred via `Rails.application.config.to_prepar
 
 1. Register the Mock Provider into `Provider::Registry` (Phase 3 §3.1)
 2. Register every agent into `AgentEngine::Registry` (Phase 2 §A.5)
-3. Subscribe Event Bus listeners — the Dependency Engine's `agentos.issue_status_changed` subscriber (Phase 2 §A.7)
+3. Subscribe Event Bus listeners — the Dependency Engine's `agentos.issue_status_changed` subscriber (Phase 2 §A.7). **As implemented in `rao-015`, this step is deliberately deferred** until Phase 14 provides a real handler — subscribing a stub that raises `NotImplementedError` would crash on the first real event instead of degrading gracefully.
 4. Extend `Project`/`Issue` with `has_many ... dependent: :destroy` associations toward AgentOS's own tables (Phase 4 §10)
+
+**Companion rake tasks** (`lib/tasks/redmineflux_agentos.rake`, added during `rao-015` implementation, not originally listed above): `redmineflux_agentos:provision_system_user` and `redmineflux_agentos:sync_system_user_memberships` — administrator-triggered, idempotent AgentOS System user provisioning (§ AgentOS System User, `rao-015`), deliberately not run automatically inside `to_prepare` since it performs DB writes and `to_prepare` can fire multiple times per boot in development.
 
 ---
 
@@ -242,7 +244,7 @@ Redmine plugins use Rails' `Test::Unit`/Minitest convention, under `test/`, not 
 ```
 test/
 ├── unit/
-│   ├── models/           # one test per app/models/redmineflux_agentos/*.rb
+│   ├── models/           # one test per app/models/redmineflux_agentos_*.rb
 │   ├── services/         # one test per lib/redmineflux_agentos/services/**/*.rb
 │   ├── agents/           # one test per lib/redmineflux_agentos/agents/*.rb
 │   ├── providers/        # Mock Provider fixture/lifecycle tests

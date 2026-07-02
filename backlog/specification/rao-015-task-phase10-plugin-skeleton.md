@@ -14,24 +14,27 @@
 
 **Description**: First implementation phase — generates the plugin skeleton per [docs/PHASE5-FOLDER-STRUCTURE.md](../../docs/PHASE5-FOLDER-STRUCTURE.md), with no business logic. This ticket specifies exactly what Phase 10 will create; it does not create it. **This ticket cannot move to `done` until code is written, tested against a running Redmine instance, and the developer confirms — none of which is possible in this environment.**
 
+**Implemented (2026-07-02) — untested**: all code listed in the Code Changes table below has been written (123 files: `init.rb`, routes, locale, initializer, 18 models, 16 controllers + 22 placeholder views, 17 agent classes, the Provider/MCP/Engine/Services lib namespaces, 4 job skeletons, asset stubs, the AgentOS System user provisioner, and a companion rake task). **Status remains `specification`, not `done`** — none of this has been booted against a real Redmine instance, migrated, or exercised by the test cases below, which this environment cannot do. Two implementation-time decisions worth the developer's attention before that testing happens: (1) the AgentOS System user's `status: User::STATUS_LOCKED` is intended to block interactive login without affecting programmatic permission checks, but this interaction with `Principal#allowed_to?` has not been verified live; (2) a `before_destroy` callback on `Issue` sets the linked `ai_task.status` to `deleted` as a safety net for issue deletions that bypass the `delete_issue` MCP tool entirely — also unverified live.
+
 **Unblocked (2026-07-02)**: the 5 open questions in `docs/PHASE1-SPECIFICATION.md` §7 that previously blocked this ticket are now resolved — background job backend and MCP transport by precedent (`redmineflux_devops`), confirmation UX by already-built consensus across every UI document, LLM provider by a stated (non-blocking) default recommendation, and code-writing-agent scope reservation by explicit decision (no reservation). This ticket is now blocked only on the ordinary "no code before spec, no merge before tests pass" constraint — i.e. it is ready to implement whenever the developer chooses to, not waiting on any further decision.
 
 **Goal**: A gate-approved Code Changes table detailed enough that "implement rao-015" is an unambiguous instruction whenever the developer is ready to begin actual coding.
 
 **Objectives**:
-- [ ] `init.rb` registers the plugin (with `requires_redmine version_or_higher:` per CLAUDE.md's 5.x/6.x compatibility target), declares `project_module :agentos` (disabled by default per project, per standard Redmine convention), all permissions (`docs/PHASE1-SPECIFICATION.md` §5), and both menu trees (§4)
-- [ ] `config/routes.rb` declares all routes (HTML + `.json`/`.api`) for every controller in `docs/PHASE9-UI-UX-SPECIFICATION.md`'s 13 pages, with the REST API portion scoped under `/agentos` with `defaults: { format: 'json' }` (matching the `redmineflux_devops` precedent already cited elsewhere in this project)
-- [ ] Every directory in `docs/PHASE5-FOLDER-STRUCTURE.md` §1 exists, with skeleton (near-empty) files
-- [ ] Controllers/models/services/jobs exist with class definitions and associations only — no business logic
-- [ ] Initializer (`docs/PHASE5-FOLDER-STRUCTURE.md` §9) exists with `to_prepare` blocks, registration bodies stubbed (raise `NotImplementedError` or no-op, filled in by Phases 11-14)
-- [ ] A dedicated **AgentOS System user** is provisioned (see Specification below) — the `User.current` identity for every autonomous, non-human-triggered agent action
+- [x] `init.rb` registers the plugin (with `requires_redmine version_or_higher:` per CLAUDE.md's 5.x/6.x compatibility target), declares `project_module :agentos` (disabled by default per project, per standard Redmine convention), all permissions (`docs/PHASE1-SPECIFICATION.md` §5), and both menu trees (§4)
+- [x] `config/routes.rb` declares all routes (HTML + `.json`/`.api`) for every controller in `docs/PHASE9-UI-UX-SPECIFICATION.md`'s 13 pages, with the REST API portion scoped under `/agentos` with `defaults: { format: 'json' }` (matching the `redmineflux_devops` precedent already cited elsewhere in this project)
+- [x] Every directory in `docs/PHASE5-FOLDER-STRUCTURE.md` §1 exists, with skeleton (near-empty) files
+- [x] Controllers/models/services/jobs exist with class definitions and associations only — no business logic
+- [x] Initializer (`docs/PHASE5-FOLDER-STRUCTURE.md` §9) exists with `to_prepare` blocks, registration bodies stubbed (raise `NotImplementedError` or no-op, filled in by Phases 11-14)
+- [x] A dedicated **AgentOS System user** is provisioned (see Specification below) — the `User.current` identity for every autonomous, non-human-triggered agent action
 
-**Deliverables** (to be created when this ticket is implemented, not by this specification task):
-- [ ] `init.rb`, `config/routes.rb`, `config/locales/en.yml`
-- [ ] `app/{controllers,models,views,helpers,jobs,serializers}/redmineflux_agentos/` (skeletons)
-- [ ] `lib/redmineflux_agentos/{agents,services,providers,mcp,engine,prompts,hooks}/` (empty module namespaces)
-- [ ] `config/initializers/redmineflux_agentos.rb`
-- [ ] `assets/{javascripts,stylesheets}/redmineflux_agentos/` (empty)
+**Deliverables** (written 2026-07-02 — see Specification's Implementation Notes; still unverified against a live Redmine instance):
+- [x] `init.rb`, `config/routes.rb`, `config/locales/en.yml`
+- [x] `app/{controllers,models,views,jobs}/redmineflux_agentos/` (skeletons — `app/helpers`, `app/serializers` intentionally left empty, nothing to stub yet)
+- [x] `lib/redmineflux_agentos/{agents,services,providers,mcp,engine,prompts,hooks}/` (namespace shells, 17 agent classes, provider/MCP/engine interfaces)
+- [x] `config/initializers/redmineflux_agentos.rb`
+- [x] `assets/{javascripts,stylesheets}/redmineflux_agentos/` (stub files, no behavior)
+- [x] `lib/redmineflux_agentos/system_user_provisioner.rb` + `lib/tasks/redmineflux_agentos.rake` (not originally itemized above — added during implementation, see Specification)
 
 ---
 

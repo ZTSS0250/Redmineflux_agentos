@@ -1,0 +1,37 @@
+en:
+  # Plugin / module labels
+  project_module_agentos: AgentOS
+
+  # Permission labels (Redmine convention: permission_{key})
+  permission_view_agentos_dashboard: View AgentOS dashboards
+  permission_create_ai_project: Start AI projects and approve requirements
+  permission_run_ai_tasks: Run AI tasks and approve pending agent actions
+  permission_view_token_usage: View token usage dashboard
+  permission_view_cost_dashboard: View cost dashboard
+  permission_view_agent_logs: View agent execution logs and audit history
+  permission_manage_agentos: Full AgentOS administration
+  permission_manage_ai_agents: Manage AI agent roster
+  permission_manage_mcp_tools: Manage MCP tools
+  permission_manage_prompt_templates: Manage prompt templates
+  permission_manage_ai_configuration: Manage AgentOS configuration
+
+  # Menu captions
+  label_agentos: AgentOS
+  label_agentos_dashboard: AgentOS
+  label_agentos_chat: AI Chat
+  label_agentos_requirement_review: Requirement Review
+  label_agentos_release_planner: Release Planner
+  label_agentos_agent_dashboard: Agent Dashboard
+  label_agentos_dependency_dashboard: Dependency Dashboard
+  label_agentos_token_usage: Token Usage
+  label_agentos_cost_dashboard: Cost Dashboard
+  label_agentos_execution_history: Execution History / Logs
+  label_new_ai_project: "+ New AI Project"
+  label_agentos_admin_agents: Agents
+  label_agentos_admin_prompt_library: Prompt Library
+  label_agentos_admin_mcp_tools: MCP Tools
+  label_agentos_admin_settings: Settings
+  label_agentos_admin_audit_logs: Audit Logs
+
+  # Placeholder text for unimplemented (Phase 15) views
+  agentos_coming_soon: "This screen is specified but not yet implemented (see docs/PHASE9-UI-UX-SPECIFICATION.md)."
