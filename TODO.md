@@ -1,8 +1,8 @@
 # TODO.md — redmineflux_agentos Task Index
 
 **Project Key**: `rao`
-**Next Task Number**: See `backlog/.counter` (current: 10)
-**Status**: See [ROADMAP.md](ROADMAP.md) for the full 16-phase roadmap and per-phase status. Phases 1, 2, 3, and 4 are fully specified and closed (9 tickets). Next up: Phase 5 — Folder Structure & Plugin Organization (`rao-010`).
+**Next Task Number**: See `backlog/.counter` (current: 22)
+**Status**: See [ROADMAP.md](ROADMAP.md) for the full 16-phase roadmap and per-phase status. **All 16 phases now have a specification.** Phases 1-9 (docs) are fully covered and closed — 14 tickets in `backlog/done/`. Phases 10-16 (code) are fully spec'd as 7 gate-approved tickets in `backlog/specification/`, but **not implemented** — no application code exists yet. `rao-015` (Phase 10) is additionally blocked on the 5 open questions in `docs/PHASE1-SPECIFICATION.md` §7.
 
 ---
 
@@ -53,21 +53,48 @@ Deliverable: [docs/PHASE3-MOCK-AI-PROVIDER-FOUNDATION.md](docs/PHASE3-MOCK-AI-PR
 
 Deliverable: [docs/PHASE4-DATABASE-DESIGN.md](docs/PHASE4-DATABASE-DESIGN.md). This deepens `docs/DATABASE-SCHEMA.md` (`rao-001`) with the ERD and cross-cutting DB-design concerns Phase 11 migrations are written against. Two real decisions made here for the first time: **no soft deletes** (one status-based exception for a deleted linked issue) and **"one active prompt version per key" enforced at the application layer, not a DB constraint** (MySQL doesn't portably support partial unique indexes). Three findings were carried forward as **mandatory** requirements for future implementation tasks: (1) concurrent prompt-version activation needs a row-lock test to prevent two active versions; (2) the `to_prepare`-based Redmine-core association extension needs a test confirming it fires under both eager- and lazy-loaded boot; (3) the log-retention job must exclude any non-terminal `agent_run` regardless of age.
 
+## Current: Phases 5-9 — remaining documentation phases (fully covered AND closed)
+
+| ID | Title | Status | Complexity |
+|----|-------|--------|------------|
+| rao-010 | Phase 5 — Folder Structure & Plugin Organization | `backlog/done/` ✅ | MEDIUM |
+| rao-011 | Phase 6 (expansion) — full per-agent Context/Prompt/Events/Retry/Escalation for all 17 agents | `backlog/done/` ✅ | MEDIUM |
+| rao-012 | Phase 7 (deepened) — MCP Architecture: Tool Registry, Permission Model, Request/Response Contracts, Error Handling | `backlog/done/` ✅ | MEDIUM |
+| rao-013 | Phase 8 — Workflow Engine & Orchestration, including Pause/Resume Logic (previously deferred) | `backlog/done/` ✅ | HIGH |
+| rao-014 | Phase 9 (deepened) — UI/UX Specification: Information Architecture, 2 new pages (Prompt Library, Settings), 2 drill-down pages (Sprint Planner, Agent Monitoring), Dashboard Designs | `backlog/done/` ✅ | MEDIUM |
+
+**Pause/Resume Logic (`rao-013`)** — the one genuinely new orchestration decision: implemented as a scheduling gate via the existing `configurations` table, not a new `agent_runs` state — the already-approved 7-state machine (`WORKFLOW.md` §8) is unchanged. Pausing stops new work from being scheduled; it never interrupts an in-flight run (use `cancelled` for that).
+
+**Settings screen (`rao-014`)** — credential fields must never pre-fill or render the real decrypted secret value, only a masked indicator — carried forward as mandatory for Phase 15.
+
+This closes every documentation phase in ROADMAP.md (1-9). `rao-001` no longer needs its "retroactive"/"partial" caveats for Phases 6, 7, or 9 — see ROADMAP.md's updated coverage note.
+
+## Current: Phases 10-16 — implementation phases (fully SPEC'D, NOT implemented)
+
+| ID | Title | Status | Complexity |
+|----|-------|--------|------------|
+| rao-015 | Phase 10 — Plugin Skeleton | `backlog/specification/` — spec-only, blocked on 5 open questions | HIGH |
+| rao-016 | Phase 11 — Database Migrations | `backlog/specification/` — spec-only | HIGH |
+| rao-017 | Phase 12 — Mock AI Provider Implementation | `backlog/specification/` — spec-only | HIGH |
+| rao-018 | Phase 13 — MCP Implementation | `backlog/specification/` — spec-only | HIGH |
+| rao-019 | Phase 14 — Multi-Agent Orchestration | `backlog/specification/` — spec-only | HIGH |
+| rao-020 | Phase 15 — User Interface Implementation | `backlog/specification/` — spec-only | HIGH |
+| rao-021 | Phase 16 — Enterprise Readiness | `backlog/specification/` — spec-only | HIGH |
+
+**Important**: these seven tickets are gate-approved *specifications* only — each has a full Planning/Specification (with a Code Changes table listing intended files)/Test Cases/Quality Gates section, but **no Ruby/Rails code has been written**. Per the Golden Rule ("no code before specification... no merge before tests pass"), none of these can move to `done` until actually implemented and tested against a running Redmine instance — something this environment cannot do. `rao-019` (Phase 14) is where every carried-forward mandatory requirement from `rao-007`, `rao-008`, `rao-009`, `rao-011`, and `rao-013` converges and must be verified.
+
 ---
 
-## Upcoming (not yet spec'd)
+## Upcoming
 
-- **rao-010** — ROADMAP.md Phase 5: Folder Structure & Plugin Organization — **next task to open**
-- Phase 6 (expansion) — per-agent memory/context/prompt-binding/state-machine detail beyond what `docs/AGENTS.md` currently covers
-- Phase 8 — Workflow Engine & Orchestration (not yet spec'd — note: `rao-007`'s Workflow Engine section is the internal state-machine design; Phase 8 is the broader orchestration model: parallel/sequential execution rules, scheduling, pause/resume)
-- Phase 10 — Plugin skeleton (`init.rb`, empty module structure, routes, permission registration, menu entries)
-- Phase 11 — Database migrations for all tables in `docs/DATABASE-SCHEMA.md`
-- Phases 12-16 — one task per phase per ROADMAP.md, each through the full three-gate review before implementation
+- Resolve the 5 open questions in `docs/PHASE1-SPECIFICATION.md` §7 — the only remaining blocker before `rao-015` (Phase 10) can actually be implemented
+- Implement `rao-015` through `rao-021` in order (each depends on the previous — see each ticket's Planning section)
 
 ---
 
 ## Changelog
 
+- 2026-07-02 — Specified all remaining phases: closed `rao-010` (Phase 5, Folder Structure), `rao-011` (Phase 6 expansion, full per-agent detail for 17 agents), `rao-012` (Phase 7 deepened, MCP Tool Registry/Permission Model/Contracts/Error Handling), `rao-013` (Phase 8, including the previously-deferred **Pause/Resume Logic** — a scheduling gate via the `configurations` table, not a new agent-run state), and `rao-014` (Phase 9 deepened, Information Architecture + Prompt Library + Settings + Sprint Planner/Agent Monitoring drill-downs) — all five moved to `backlog/done/`, completing every ROADMAP.md documentation phase (1-9). Then specified all seven implementation phases as full tickets with Code Changes tables — `rao-015` (Phase 10, Plugin Skeleton, still blocked on the 5 open questions), `rao-016` (Phase 11, Database Migrations), `rao-017` (Phase 12, Mock Provider Implementation), `rao-018` (Phase 13, MCP Implementation), `rao-019` (Phase 14, Multi-Agent Orchestration — where every prior carried-forward requirement converges), `rao-020` (Phase 15, UI Implementation), `rao-021` (Phase 16, Enterprise Readiness) — all seven stay in `backlog/specification/`, gate-approved but unimplemented, per the Golden Rule. Counter advanced to 22. All 16 ROADMAP.md phases now have a specification.
 - 2026-07-02 — Closed `rao-009`: moved `backlog/specification/rao-009-task-phase4-database-design.md` → `backlog/done/`, Status set to `done`, Done section filled. `docs/PHASE4-DATABASE-DESIGN.md` re-verified present at close-out. `backlog/specification/` is now empty again — all nine tickets across Phase 1, 2, 3, and 4 are closed in `backlog/done/`.
 - 2026-07-02 — Spec'd `rao-009` (ROADMAP.md Phase 4 — Database Design): new `docs/PHASE4-DATABASE-DESIGN.md` deepens `docs/DATABASE-SCHEMA.md` with a real Mermaid ERD, a Database Architecture Overview, a consolidated Indexing Strategy (filling in every index `rao-001` didn't specify), Constraints, a full Enumerations catalog, a JSON Field Usage catalog with a cross-database query-portability rule, a State Machines catalog, a deepened Audit Tables immutability mechanism, a Soft Delete Strategy (none needed — one status-based exception for a deleted linked issue), a Versioning Strategy pattern, and Performance Considerations (retention/archival policy). Two genuinely new decisions made here: no soft deletes anywhere, and "one active prompt version per key" enforced at the application layer rather than a DB constraint (MySQL doesn't portably support partial unique indexes). All three gates approved at docs-scope, with three findings carried forward as mandatory future-implementation requirements (concurrent prompt-activation race-condition test; `to_prepare` core-association boot-mode test; retention job must exclude non-terminal agent runs). Note: `rao-009` was previously reserved for Phase 5 in an earlier changelog entry below — Phase 4 took priority instead, so Phase 5 is now `rao-010`. Counter advanced to 10. Ticket currently sits in `backlog/specification/`, awaiting close-out.
 - 2026-07-02 — Closed `rao-008`: moved `backlog/specification/rao-008-task-phase3-mock-ai-provider-foundation.md` → `backlog/done/`, Status set to `done`, Done section filled. `docs/PHASE3-MOCK-AI-PROVIDER-FOUNDATION.md` re-verified present at close-out, including the Gate 1 revision-pass fixes. `backlog/specification/` is now empty again — all eight tickets across Phase 1, 2, and 3 are closed in `backlog/done/`.

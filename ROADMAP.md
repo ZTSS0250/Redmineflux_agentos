@@ -18,20 +18,20 @@ See [WORKFLOW.md](WORKFLOW.md) for the end-to-end workflow narrative (how these 
 | 2 | Core Technical Architecture | Docs | ✅ Fully covered | `rao-001` (baseline) + `rao-007` (deepened: Agent Engine, Workflow Engine, Event Bus, Conversation/Memory/Prompt architecture, 10 cross-cutting strategies) |
 | 3 | Mock AI Provider Foundation | Docs | ✅ Fully covered | `rao-008` |
 | 4 | Database Design | Docs | ✅ Fully covered | `rao-001` (baseline) + `rao-009` (deepened: ERD, Indexing Strategy, Constraints, Enumerations, JSON Field Usage, State Machines, Soft Delete Strategy, Versioning Strategy, Performance Considerations) |
-| 5 | Folder Structure & Plugin Organization | Docs | ⏳ Not yet spec'd | unassigned |
-| 6 | Agent Architecture (per-agent detail) | Docs | ⚠️ Partially covered — needs expansion | `rao-001` (partial), gap noted below |
-| 7 | MCP Architecture | Docs | ✅ Retroactively covered | `rao-001` |
-| 8 | Workflow Engine & Orchestration | Docs | ⏳ Not yet spec'd | unassigned |
-| 9 | UI/UX Specification | Docs | ✅ Retroactively covered | `rao-001` |
-| 10 | Plugin Skeleton | Code | ⏳ Blocked on Phases 2, 3, 5, 8 | unassigned (was placeholder `rao-002`) |
-| 11 | Database Migrations | Code | ⏳ Blocked on Phase 4 sign-off | unassigned (was placeholder `rao-003`) |
-| 12 | Mock AI Provider Implementation | Code | ⏳ Blocked on Phase 3 | unassigned |
-| 13 | MCP Implementation | Code | ⏳ Blocked on Phase 7 | unassigned |
-| 14 | Multi-Agent Orchestration | Code | ⏳ Blocked on Phases 6, 8 | unassigned |
-| 15 | User Interface Implementation | Code | ⏳ Blocked on Phase 9 | unassigned |
-| 16 | Enterprise Readiness | Code | ⏳ Blocked on all above | unassigned |
+| 5 | Folder Structure & Plugin Organization | Docs | ✅ Fully covered | `rao-010` |
+| 6 | Agent Architecture (per-agent detail) | Docs | ✅ Fully covered | `rao-001` (baseline) + `rao-011` (expansion: Context, Prompt Template binding, Produced/Consumed Events, Retry Rules, Escalation Rules for all 17 agents) |
+| 7 | MCP Architecture | Docs | ✅ Fully covered | `rao-001` (baseline) + `rao-012` (deepened: Tool Registry, Permission Model, Request/Response Contracts, Error Handling) |
+| 8 | Workflow Engine & Orchestration | Docs | ✅ Fully covered | `rao-013` (includes Pause/Resume Logic, previously deferred) |
+| 9 | UI/UX Specification | Docs | ✅ Fully covered | `rao-001` (baseline) + `rao-014` (deepened: Information Architecture, 2 new pages, 2 drill-down pages, Dashboard Designs) |
+| 10 | Plugin Skeleton | Code | 📋 Spec'd, blocked on 5 open questions (`docs/PHASE1-SPECIFICATION.md` §7) | `rao-015` (spec only — not implemented) |
+| 11 | Database Migrations | Code | 📋 Spec'd | `rao-016` (spec only — not implemented) |
+| 12 | Mock AI Provider Implementation | Code | 📋 Spec'd | `rao-017` (spec only — not implemented) |
+| 13 | MCP Implementation | Code | 📋 Spec'd | `rao-018` (spec only — not implemented) |
+| 14 | Multi-Agent Orchestration | Code | 📋 Spec'd | `rao-019` (spec only — not implemented) |
+| 15 | User Interface Implementation | Code | 📋 Spec'd | `rao-020` (spec only — not implemented) |
+| 16 | Enterprise Readiness | Code | 📋 Spec'd | `rao-021` (spec only — not implemented) |
 
-**Retroactive coverage note**: `rao-001` (gate-approved, docs-scope) bundled what this roadmap now splits into Phases 1, 2, 4, 7, and 9, via `docs/PHASE1-SPECIFICATION.md`, `docs/DATABASE-SCHEMA.md`, `docs/MCP-TOOLS.md`, `docs/AGENTS.md`, and `docs/UI-WIREFRAMES.md`. Phases 7 and 9 are considered satisfied at the depth this roadmap asks for. Phase 6 is only **partially** satisfied — `rao-001` covers per-agent purpose/responsibilities, but this roadmap's Phase 6 (per-agent memory, context, prompt template binding, MCP tool binding, state machine, retry/escalation rules) goes deeper than what exists today. This gap should be closed as a follow-up specification task before Phase 10+ implementation begins, not silently treated as done.
+**Retroactive coverage note (historical)**: `rao-001` (gate-approved, docs-scope) originally bundled what this roadmap splits into Phases 1, 2, 4, 6, 7, and 9. Every one of those gaps has since been closed by a dedicated deepening ticket — see the completion notes below. As of 2026-07-02, **all 16 phases have a specification** (Phases 1-9: fully covered and closed; Phases 10-16: fully spec'd, awaiting implementation).
 
 **Phase 2 completion (2026-07-02)**: `rao-007` closed the Phase 2 gap flagged above — `docs/PHASE2-CORE-TECHNICAL-ARCHITECTURE.md` adds Service-Oriented Architecture conventions, a SOLID-principles mapping, expanded Module Responsibilities, Agent Engine internals (Registry/Lifecycle/Runner + concurrency model), a Workflow Engine design (one state machine shared by agent-run and ticket-status workflows), a concrete Event Bus design (built on `ActiveSupport::Notifications`, resolving `WORKFLOW.md` §15's forward-looking flag), Conversation/Memory/Prompt architecture, and all ten cross-cutting strategies (Background Job, Queue, Cache, Retry, Logging, Configuration, Error Handling, Security, Performance, Scalability). Phase 2 is now fully covered.
 
@@ -41,7 +41,11 @@ See [WORKFLOW.md](WORKFLOW.md) for the end-to-end workflow narrative (how these 
 
 **Phase 4 completion (2026-07-02)**: `rao-009` closed the Phase 4 gap flagged above — `docs/PHASE4-DATABASE-DESIGN.md` adds a real Mermaid ERD, a Database Architecture Overview, a consolidated Indexing Strategy (filling in every index `rao-001` didn't specify), Constraints (including a deliberate cross-database-portability tradeoff for prompt-template versioning), a full Enumerations catalog, a JSON Field Usage catalog with a query-portability rule, a State Machines catalog cross-referencing the Phase 2 Workflow Engine, a deepened Audit Tables immutability mechanism, a Soft Delete Strategy (none needed, with one concrete status-based exception), a Versioning Strategy pattern, and Performance Considerations (retention/archival policy). Phase 4 is now fully covered.
 
-**Next action**: Phase 5 — Folder Structure & Plugin Organization is the next fully un-spec'd *documentation* phase in sequence (Phase 7, 9 already covered by `rao-001`; Phase 6 is partially covered — see the coverage note above). Counter advanced to 10 after `rao-009` closed the Phase 4 gap; the next task opened should be `rao-010`.
+**Phases 5-9 completion (2026-07-02)**: `rao-010` (Phase 5, Folder Structure), `rao-011` (Phase 6 expansion, full per-agent Context/Prompt/Events/Retry/Escalation for all 17 agents), `rao-012` (Phase 7 deepened, Tool Registry/Permission Model/Contracts/Error Handling), `rao-013` (Phase 8, including the previously-deferred Pause/Resume Logic — implemented as a scheduling gate via the existing `configurations` table, not a new agent-run state), and `rao-014` (Phase 9 deepened, Information Architecture + 2 new pages [Prompt Library, Settings] + 2 drill-down pages [Sprint Planner, Agent Monitoring]) — all five closed in `backlog/done/`. This completes every documentation phase (1-9).
+
+**Phases 10-16 specified, not implemented (2026-07-02)**: `rao-015` through `rao-021` give every implementation phase a full Planning/Specification (with a Code Changes table)/Test Cases/Quality-Gates ticket — but per the Golden Rule ("no code before specification... no merge before tests pass"), **none of these tickets have been implemented**. They sit gate-approved in `backlog/specification/`, ready for whenever the developer says "implement this," starting with `rao-015` (Phase 10, Plugin Skeleton) — which is itself still blocked on the 5 open questions in `docs/PHASE1-SPECIFICATION.md` §7.
+
+**Next action**: either (a) resolve the 5 open questions so `rao-015` can actually be implemented, or (b) continue refining specifications. Counter advanced to 22.
 
 ---
 
