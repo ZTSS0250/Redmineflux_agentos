@@ -31,7 +31,7 @@ A Redmine plugin that runs a team of specialized AI agents (Project Manager, Req
 
 **Phase 1 — Specification only. No code has been written yet.**
 
-See [docs/PHASE1-SPECIFICATION.md](docs/PHASE1-SPECIFICATION.md) for the functional specification, architecture, folder structure, navigation, and agent lifecycle. See [docs/DATABASE-SCHEMA.md](docs/DATABASE-SCHEMA.md), [docs/AGENTS.md](docs/AGENTS.md), [docs/MCP-TOOLS.md](docs/MCP-TOOLS.md), and [docs/UI-WIREFRAMES.md](docs/UI-WIREFRAMES.md) for the supporting detail documents.
+See [docs/PHASE1-SPECIFICATION.md](docs/PHASE1-SPECIFICATION.md) for the functional specification, architecture, folder structure, navigation, and agent lifecycle. See [docs/DATABASE-SCHEMA.md](docs/DATABASE-SCHEMA.md), [docs/AGENTS.md](docs/AGENTS.md), [docs/MCP-TOOLS.md](docs/MCP-TOOLS.md), [docs/UI-WIREFRAMES.md](docs/UI-WIREFRAMES.md), [docs/USER-ROLES-AND-STORIES.md](docs/USER-ROLES-AND-STORIES.md), and [docs/SECURITY-COMPLIANCE-OVERVIEW.md](docs/SECURITY-COMPLIANCE-OVERVIEW.md) for the supporting detail documents. See [ROADMAP.md](ROADMAP.md) for the full 16-phase internal build-process roadmap, [docs/PRODUCT-ROADMAP.md](docs/PRODUCT-ROADMAP.md) for the v1 → v2 → v3 product capability roadmap (a different document — do not confuse the two), and [WORKFLOW.md](WORKFLOW.md) for the end-to-end workflow specification (how the system operates, agent-to-agent handoffs, MCP lifecycle, approval gates).
 
 Per the global SDD process, this plugin will not receive a single line of application code until Phase 1 is reviewed and approved by the developer, at which point Phase 2 (plugin skeleton) begins.
 

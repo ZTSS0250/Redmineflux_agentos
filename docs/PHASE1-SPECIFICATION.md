@@ -1,7 +1,7 @@
 # Phase 1 Specification — redmineflux_agentos
 
 **Status**: Draft, awaiting developer approval. No code exists yet.
-**Companion docs**: [AGENTS.md](AGENTS.md) · [DATABASE-SCHEMA.md](DATABASE-SCHEMA.md) · [MCP-TOOLS.md](MCP-TOOLS.md) · [UI-WIREFRAMES.md](UI-WIREFRAMES.md)
+**Companion docs**: [AGENTS.md](AGENTS.md) · [DATABASE-SCHEMA.md](DATABASE-SCHEMA.md) · [MCP-TOOLS.md](MCP-TOOLS.md) · [UI-WIREFRAMES.md](UI-WIREFRAMES.md) · [USER-ROLES-AND-STORIES.md](USER-ROLES-AND-STORIES.md) · [SECURITY-COMPLIANCE-OVERVIEW.md](SECURITY-COMPLIANCE-OVERVIEW.md) · [PRODUCT-ROADMAP.md](PRODUCT-ROADMAP.md) · [../ROADMAP.md](../ROADMAP.md) · [../WORKFLOW.md](../WORKFLOW.md)
 
 ---
 
