@@ -1,8 +1,8 @@
 # TODO.md — redmineflux_agentos Task Index
 
 **Project Key**: `rao`
-**Next Task Number**: See `backlog/.counter` (current: 9)
-**Status**: See [ROADMAP.md](ROADMAP.md) for the full 16-phase roadmap and per-phase status. Phases 1, 2, and 3 are fully specified and closed (8 tickets). Next up: Phase 5 — Folder Structure & Plugin Organization (`rao-009`).
+**Next Task Number**: See `backlog/.counter` (current: 10)
+**Status**: See [ROADMAP.md](ROADMAP.md) for the full 16-phase roadmap and per-phase status. Phases 1, 2, 3, and 4 are fully specified and closed (9 tickets). Next up: Phase 5 — Folder Structure & Plugin Organization (`rao-010`).
 
 ---
 
@@ -33,7 +33,7 @@ Deliverable: [docs/PHASE2-CORE-TECHNICAL-ARCHITECTURE.md](docs/PHASE2-CORE-TECHN
 
 Read in this order: [VISION.md](VISION.md) → [docs/PHASE1-SPECIFICATION.md](docs/PHASE1-SPECIFICATION.md) → [docs/USER-ROLES-AND-STORIES.md](docs/USER-ROLES-AND-STORIES.md) → [docs/SECURITY-COMPLIANCE-OVERVIEW.md](docs/SECURITY-COMPLIANCE-OVERVIEW.md) → [docs/PRODUCT-ROADMAP.md](docs/PRODUCT-ROADMAP.md) → [docs/AGENTS.md](docs/AGENTS.md) → [docs/DATABASE-SCHEMA.md](docs/DATABASE-SCHEMA.md) → [docs/MCP-TOOLS.md](docs/MCP-TOOLS.md) → [docs/UI-WIREFRAMES.md](docs/UI-WIREFRAMES.md) → [WORKFLOW.md](WORKFLOW.md).
 
-`rao-001` retroactively satisfies ROADMAP.md Phases 4, 7, and 9 in full, and *partially* satisfies Phase 6 (see ROADMAP.md's coverage note — still open). `rao-002`..`rao-006` together now fully and individually satisfy every Phase 1 deliverable. `rao-007` fully satisfies Phase 2 (superseding the earlier "partial" status).
+`rao-001` retroactively satisfies ROADMAP.md Phases 7 and 9 in full, and *partially* satisfies Phase 6 (see ROADMAP.md's coverage note — still open). `rao-002`..`rao-006` together now fully and individually satisfy every Phase 1 deliverable. `rao-007` fully satisfies Phase 2, and `rao-009` fully satisfies Phase 4 (both superseding the earlier "partial"/"retroactive" status).
 
 **Blocking Phase 10 (plugin skeleton)**: 5 open questions in `docs/PHASE1-SPECIFICATION.md` §7 (LLM provider, background job backend, MCP transport, confirmation UX, code-writing-agent scope reservation). Note: `rao-007`'s Background Job Strategy effectively answers question #2 by precedent (plain `ActiveJob`, adapter-agnostic), but the question is formally still open pending developer sign-off.
 
@@ -45,11 +45,19 @@ Read in this order: [VISION.md](VISION.md) → [docs/PHASE1-SPECIFICATION.md](do
 
 Deliverable: [docs/PHASE3-MOCK-AI-PROVIDER-FOUNDATION.md](docs/PHASE3-MOCK-AI-PROVIDER-FOUNDATION.md). This is the foundational contract every future real LLM provider (v2, `docs/PRODUCT-ROADMAP.md`) and every agent-execution path is written against — no real LLM integration in v1, zero external data egress. One finding was carried forward as a **mandatory** requirement for whichever future task implements the first real provider: `active_provider != "mock"` must require non-nil, validated credentials before activation (never silently inherit the Mock Provider's `credentials: nil` allowance).
 
+## Current: Phase 4 — Database Design (fully covered AND closed)
+
+| ID | Title | Status | Complexity |
+|----|-------|--------|------------|
+| rao-009 | Phase 4 — Database Design (ERD, Indexing Strategy, Constraints, Enumerations, JSON Field Usage, State Machines, Soft Delete Strategy, Versioning Strategy, Performance Considerations) | `backlog/done/` ✅ | HIGH |
+
+Deliverable: [docs/PHASE4-DATABASE-DESIGN.md](docs/PHASE4-DATABASE-DESIGN.md). This deepens `docs/DATABASE-SCHEMA.md` (`rao-001`) with the ERD and cross-cutting DB-design concerns Phase 11 migrations are written against. Two real decisions made here for the first time: **no soft deletes** (one status-based exception for a deleted linked issue) and **"one active prompt version per key" enforced at the application layer, not a DB constraint** (MySQL doesn't portably support partial unique indexes). Three findings were carried forward as **mandatory** requirements for future implementation tasks: (1) concurrent prompt-version activation needs a row-lock test to prevent two active versions; (2) the `to_prepare`-based Redmine-core association extension needs a test confirming it fires under both eager- and lazy-loaded boot; (3) the log-retention job must exclude any non-terminal `agent_run` regardless of age.
+
 ---
 
 ## Upcoming (not yet spec'd)
 
-- **rao-009** — ROADMAP.md Phase 5: Folder Structure & Plugin Organization — **next task to open**
+- **rao-010** — ROADMAP.md Phase 5: Folder Structure & Plugin Organization — **next task to open**
 - Phase 6 (expansion) — per-agent memory/context/prompt-binding/state-machine detail beyond what `docs/AGENTS.md` currently covers
 - Phase 8 — Workflow Engine & Orchestration (not yet spec'd — note: `rao-007`'s Workflow Engine section is the internal state-machine design; Phase 8 is the broader orchestration model: parallel/sequential execution rules, scheduling, pause/resume)
 - Phase 10 — Plugin skeleton (`init.rb`, empty module structure, routes, permission registration, menu entries)
@@ -60,6 +68,8 @@ Deliverable: [docs/PHASE3-MOCK-AI-PROVIDER-FOUNDATION.md](docs/PHASE3-MOCK-AI-PR
 
 ## Changelog
 
+- 2026-07-02 — Closed `rao-009`: moved `backlog/specification/rao-009-task-phase4-database-design.md` → `backlog/done/`, Status set to `done`, Done section filled. `docs/PHASE4-DATABASE-DESIGN.md` re-verified present at close-out. `backlog/specification/` is now empty again — all nine tickets across Phase 1, 2, 3, and 4 are closed in `backlog/done/`.
+- 2026-07-02 — Spec'd `rao-009` (ROADMAP.md Phase 4 — Database Design): new `docs/PHASE4-DATABASE-DESIGN.md` deepens `docs/DATABASE-SCHEMA.md` with a real Mermaid ERD, a Database Architecture Overview, a consolidated Indexing Strategy (filling in every index `rao-001` didn't specify), Constraints, a full Enumerations catalog, a JSON Field Usage catalog with a cross-database query-portability rule, a State Machines catalog, a deepened Audit Tables immutability mechanism, a Soft Delete Strategy (none needed — one status-based exception for a deleted linked issue), a Versioning Strategy pattern, and Performance Considerations (retention/archival policy). Two genuinely new decisions made here: no soft deletes anywhere, and "one active prompt version per key" enforced at the application layer rather than a DB constraint (MySQL doesn't portably support partial unique indexes). All three gates approved at docs-scope, with three findings carried forward as mandatory future-implementation requirements (concurrent prompt-activation race-condition test; `to_prepare` core-association boot-mode test; retention job must exclude non-terminal agent runs). Note: `rao-009` was previously reserved for Phase 5 in an earlier changelog entry below — Phase 4 took priority instead, so Phase 5 is now `rao-010`. Counter advanced to 10. Ticket currently sits in `backlog/specification/`, awaiting close-out.
 - 2026-07-02 — Closed `rao-008`: moved `backlog/specification/rao-008-task-phase3-mock-ai-provider-foundation.md` → `backlog/done/`, Status set to `done`, Done section filled. `docs/PHASE3-MOCK-AI-PROVIDER-FOUNDATION.md` re-verified present at close-out, including the Gate 1 revision-pass fixes. `backlog/specification/` is now empty again — all eight tickets across Phase 1, 2, and 3 are closed in `backlog/done/`.
 - 2026-07-02 — Revised `rao-008` before close-out: a follow-up review of `docs/PHASE3-MOCK-AI-PROVIDER-FOUNDATION.md` found and fixed a genuine correctness bug (multiple `tool_calls` from one turn would collide on one shared `idempotency_key`, causing `Mcp::Executor` to silently drop all but the first — now fixed with per-call `{idempotency_key}-{n}` suffixing) plus three completeness gaps: added a `memory_updates` field to the Standard Response Model (previously nothing defined what the Runner's "write memory updates" step actually writes), made fixture selection round-aware for categories like Clarification Questions (previously contradicted the no-conditionals templating rule), and tightened `latency_ms` to a fixed, non-randomized value (previously ambiguous, risked breaking determinism). Also added a concrete fixture file shape/example to §7. Logged as a Gate 1 revision pass in `rao-008`, not a silent edit.
 - 2026-07-02 — Spec'd `rao-008` (ROADMAP.md Phase 3 — Mock AI Provider Foundation): new `docs/PHASE3-MOCK-AI-PROVIDER-FOUNDATION.md` defines the Provider Interface (standard request/response/error/capability/configuration models), the Mock AI Provider's internal architecture and full lifecycle, Provider-specific detail on Conversation Flow and Agent Execution Flow (extending `rao-007`), Prompt Management and the 11-category Prompt Template Library, the Mock Response Strategy (12 deterministic fixture-based scenarios) with generation rules for fake requirement analysis/ticket generation/dependency mapping/agent collaboration, Token Usage & Cost Simulation (fixture-declared, never runtime-computed, to guarantee determinism), Provider-specific Logging/Error Handling/Configuration extensions, and the Future Migration Plan's concrete mechanics. Performed the required Documentation Updates review: `CLAUDE.md` and `docs/PHASE1-SPECIFICATION.md` companion-doc lists updated; `VISION.md` checked and found already consistent (no edit needed); no new documents proposed beyond the one created. All three gates approved at docs-scope, with one finding carried forward as a mandatory future-implementation requirement (real providers must require validated, non-nil credentials before activation — never inherit Mock's `credentials: nil` allowance). Counter advanced to 9; next task is `rao-009` for Phase 5 (Folder Structure & Plugin Organization). Ticket currently sits in `backlog/specification/`, awaiting close-out.
