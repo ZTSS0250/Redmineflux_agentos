@@ -15,8 +15,8 @@ See [WORKFLOW.md](WORKFLOW.md) for the end-to-end workflow narrative (how these 
 | Phase | Name | Type | Status | Task(s) |
 |---|---|---|---|---|
 | 1 | Product Functional Specification | Docs | ✅ Fully covered — 5 discrete tickets, individually gated | `rao-001` (bundled baseline) + `rao-002`..`rao-006` (per-deliverable breakdown) |
-| 2 | Core Technical Architecture | Docs | ⚠️ Partially covered — needs expansion | `rao-001` (partial), gap noted below |
-| 3 | Mock AI Provider Foundation | Docs | 🔜 Next up — not yet spec'd | unassigned (`rao-007`) |
+| 2 | Core Technical Architecture | Docs | ✅ Fully covered | `rao-001` (baseline) + `rao-007` (deepened: Agent Engine, Workflow Engine, Event Bus, Conversation/Memory/Prompt architecture, 10 cross-cutting strategies) |
+| 3 | Mock AI Provider Foundation | Docs | 🔜 Next up — not yet spec'd | unassigned (`rao-008`) |
 | 4 | Database Design | Docs | ✅ Retroactively covered | `rao-001` |
 | 5 | Folder Structure & Plugin Organization | Docs | ⏳ Not yet spec'd | unassigned |
 | 6 | Agent Architecture (per-agent detail) | Docs | ⚠️ Partially covered — needs expansion | `rao-001` (partial), gap noted below |
@@ -31,11 +31,13 @@ See [WORKFLOW.md](WORKFLOW.md) for the end-to-end workflow narrative (how these 
 | 15 | User Interface Implementation | Code | ⏳ Blocked on Phase 9 | unassigned |
 | 16 | Enterprise Readiness | Code | ⏳ Blocked on all above | unassigned |
 
-**Retroactive coverage note**: `rao-001` (gate-approved, docs-scope) bundled what this roadmap now splits into Phases 1, 2, 4, 7, and 9, via `docs/PHASE1-SPECIFICATION.md`, `docs/DATABASE-SCHEMA.md`, `docs/MCP-TOOLS.md`, `docs/AGENTS.md`, and `docs/UI-WIREFRAMES.md`. Phases 4, 7, and 9 are considered satisfied at the depth this roadmap asks for. Phases 2 and 6 are only **partially** satisfied — `rao-001` covers high-level architecture and per-agent purpose/responsibilities, but this roadmap's Phase 2 (SOLID principles, event bus, memory/prompt architecture, retry/cache/queue strategy) and Phase 6 (per-agent memory, context, prompt template binding, MCP tool binding, state machine, retry/escalation rules) go deeper than what exists today. These gaps should be closed as follow-up specification tasks before Phase 10+ implementation begins, not silently treated as done.
+**Retroactive coverage note**: `rao-001` (gate-approved, docs-scope) bundled what this roadmap now splits into Phases 1, 2, 4, 7, and 9, via `docs/PHASE1-SPECIFICATION.md`, `docs/DATABASE-SCHEMA.md`, `docs/MCP-TOOLS.md`, `docs/AGENTS.md`, and `docs/UI-WIREFRAMES.md`. Phases 4, 7, and 9 are considered satisfied at the depth this roadmap asks for. Phase 6 is only **partially** satisfied — `rao-001` covers per-agent purpose/responsibilities, but this roadmap's Phase 6 (per-agent memory, context, prompt template binding, MCP tool binding, state machine, retry/escalation rules) goes deeper than what exists today. This gap should be closed as a follow-up specification task before Phase 10+ implementation begins, not silently treated as done.
+
+**Phase 2 completion (2026-07-02)**: `rao-007` closed the Phase 2 gap flagged above — `docs/PHASE2-CORE-TECHNICAL-ARCHITECTURE.md` adds Service-Oriented Architecture conventions, a SOLID-principles mapping, expanded Module Responsibilities, Agent Engine internals (Registry/Lifecycle/Runner + concurrency model), a Workflow Engine design (one state machine shared by agent-run and ticket-status workflows), a concrete Event Bus design (built on `ActiveSupport::Notifications`, resolving `WORKFLOW.md` §15's forward-looking flag), Conversation/Memory/Prompt architecture, and all ten cross-cutting strategies (Background Job, Queue, Cache, Retry, Logging, Configuration, Error Handling, Security, Performance, Scalability). Phase 2 is now fully covered.
 
 **Phase 1 breakdown (2026-07-02)**: Phase 1's deliverable list has been broken into 5 individually-gated tickets that supersede the informal "retroactively covered" label — `rao-002` (Product Vision, Business Goals, Project Scope, Success Criteria, Assumptions & Constraints), `rao-003` (Functional/Non-Functional Requirements, User Roles & Personas, User Stories), `rao-004` (AI-Assisted Development Workflow, Multi-Agent Collaboration Overview), `rao-005` (MCP Vision, Security & Compliance Overview), `rao-006` (High-Level Architecture, Product Roadmap v1→v2→v3). Each ticket cites already-approved content where it existed and adds genuinely new documents/sections where it didn't (`docs/USER-ROLES-AND-STORIES.md`, `docs/SECURITY-COMPLIANCE-OVERVIEW.md`, `docs/PRODUCT-ROADMAP.md`, plus five new sections in `VISION.md`). All five passed their three-gate review at docs-scope and sit in `backlog/specification/`.
 
-**Next action**: Phase 3 — Mock AI Provider Foundation is the first fully un-spec'd phase in sequence and should be the next backlog task opened (`rao-007` — counter advanced to 7 after the Phase 1 breakdown consumed `rao-002`..`rao-006`).
+**Next action**: Phase 3 — Mock AI Provider Foundation is the first fully un-spec'd phase in sequence and should be the next backlog task opened (`rao-008` — counter advanced to 8 after `rao-007` closed the Phase 2 gap).
 
 ---
 

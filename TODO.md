@@ -1,8 +1,8 @@
 # TODO.md — redmineflux_agentos Task Index
 
 **Project Key**: `rao`
-**Next Task Number**: See `backlog/.counter` (current: 7)
-**Status**: See [ROADMAP.md](ROADMAP.md) for the full 16-phase roadmap and per-phase status. Phase 1 is fully done — all 6 tickets (`rao-001`..`rao-006`) closed in `backlog/done/`. Next up: Phase 3 — Mock AI Provider Foundation (`rao-007`).
+**Next Task Number**: See `backlog/.counter` (current: 8)
+**Status**: See [ROADMAP.md](ROADMAP.md) for the full 16-phase roadmap and per-phase status. Phase 1 and Phase 2 are fully done and closed (7 tickets). Next up: Phase 3 — Mock AI Provider Foundation (`rao-008`).
 
 ---
 
@@ -21,11 +21,19 @@ The full phase-by-phase roadmap (architecture-first: functional spec → archite
 | rao-005 | Phase 1d — MCP Vision & Security/Compliance Overview | `backlog/done/` ✅ | MEDIUM |
 | rao-006 | Phase 1e — High-Level Architecture & Product Roadmap (v1 → v2 → v3) | `backlog/done/` ✅ | MEDIUM |
 
-`backlog/specification/` is now empty — every Phase 1 ticket has been verified deliverable-complete and moved to `backlog/done/`.
+`backlog/specification/` is now empty of Phase 1 tickets — every one has been verified deliverable-complete and moved to `backlog/done/`.
+
+## Current: Phase 2 — Core Technical Architecture (fully covered AND closed)
+
+| ID | Title | Status | Complexity |
+|----|-------|--------|------------|
+| rao-007 | Phase 2 — Core Technical Architecture (SOA, SOLID, Agent Engine, Workflow Engine, Event Bus, Conversation/Memory/Prompt architecture, 10 cross-cutting strategies) | `backlog/done/` ✅ | HIGH |
+
+Deliverable: [docs/PHASE2-CORE-TECHNICAL-ARCHITECTURE.md](docs/PHASE2-CORE-TECHNICAL-ARCHITECTURE.md). This closes the Phase 2 gap `rao-001` left open — see `ROADMAP.md`'s "Phase 2 completion" note. Three findings were carried forward as **mandatory** requirements for future implementation tasks (not just documented intent): (1) Event Bus subscribers must be fast/non-blocking — enqueue a job for real work, don't do it inline; (2) the Concurrency Guard must use an atomic DB operation, not check-then-act; (3) the per-project dependency-graph cache needs invalidation tests on both insert *and* delete paths.
 
 Read in this order: [VISION.md](VISION.md) → [docs/PHASE1-SPECIFICATION.md](docs/PHASE1-SPECIFICATION.md) → [docs/USER-ROLES-AND-STORIES.md](docs/USER-ROLES-AND-STORIES.md) → [docs/SECURITY-COMPLIANCE-OVERVIEW.md](docs/SECURITY-COMPLIANCE-OVERVIEW.md) → [docs/PRODUCT-ROADMAP.md](docs/PRODUCT-ROADMAP.md) → [docs/AGENTS.md](docs/AGENTS.md) → [docs/DATABASE-SCHEMA.md](docs/DATABASE-SCHEMA.md) → [docs/MCP-TOOLS.md](docs/MCP-TOOLS.md) → [docs/UI-WIREFRAMES.md](docs/UI-WIREFRAMES.md) → [WORKFLOW.md](WORKFLOW.md).
 
-`rao-001` retroactively satisfies ROADMAP.md Phases 4, 7, and 9 in full, and *partially* satisfies Phases 2 and 6 (see ROADMAP.md's coverage note). `rao-002`..`rao-006` together now fully and individually satisfy every Phase 1 deliverable — Phase 1 no longer relies on the informal "retroactively covered" label alone.
+`rao-001` retroactively satisfies ROADMAP.md Phases 4, 7, and 9 in full, and *partially* satisfies Phase 6 (see ROADMAP.md's coverage note — still open). `rao-002`..`rao-006` together now fully and individually satisfy every Phase 1 deliverable. `rao-007` fully satisfies Phase 2 (superseding the earlier "partial" status).
 
 **Blocking Phase 10 (plugin skeleton)**: 5 open questions in `docs/PHASE1-SPECIFICATION.md` §7 (LLM provider, background job backend, MCP transport, confirmation UX, code-writing-agent scope reservation).
 
@@ -33,11 +41,10 @@ Read in this order: [VISION.md](VISION.md) → [docs/PHASE1-SPECIFICATION.md](do
 
 ## Upcoming (not yet spec'd)
 
-- **rao-007** — ROADMAP.md Phase 3: Mock AI Provider Foundation (provider interface, prompt management, fixture-based mock responses, token/cost simulation) — **next task to open**
+- **rao-008** — ROADMAP.md Phase 3: Mock AI Provider Foundation (provider interface, prompt management, fixture-based mock responses, token/cost simulation) — **next task to open**
 - Phase 5 — Folder Structure & Plugin Organization (not yet spec'd)
 - Phase 6 (expansion) — per-agent memory/context/prompt-binding/state-machine detail beyond what `docs/AGENTS.md` currently covers
-- Phase 8 — Workflow Engine & Orchestration (not yet spec'd)
-- Phase 2 (expansion) — SOLID design principles, event bus, memory/prompt architecture, retry/cache/queue strategy beyond what `docs/PHASE1-SPECIFICATION.md` currently covers
+- Phase 8 — Workflow Engine & Orchestration (not yet spec'd — note: `rao-007`'s Workflow Engine section is the internal state-machine design; Phase 8 is the broader orchestration model: parallel/sequential execution rules, scheduling, pause/resume)
 - Phase 10 — Plugin skeleton (`init.rb`, empty module structure, routes, permission registration, menu entries)
 - Phase 11 — Database migrations for all tables in `docs/DATABASE-SCHEMA.md`
 - Phases 12-16 — one task per phase per ROADMAP.md, each through the full three-gate review before implementation
@@ -46,6 +53,8 @@ Read in this order: [VISION.md](VISION.md) → [docs/PHASE1-SPECIFICATION.md](do
 
 ## Changelog
 
+- 2026-07-02 — Closed `rao-007`: moved `backlog/specification/rao-007-task-phase2-core-technical-architecture.md` → `backlog/done/`, Status set to `done`, Done section filled. `docs/PHASE2-CORE-TECHNICAL-ARCHITECTURE.md` re-verified present at close-out. `backlog/specification/` is now empty again — all seven tickets across Phase 1 and Phase 2 are closed in `backlog/done/`.
+- 2026-07-02 — Spec'd `rao-007` (ROADMAP.md Phase 2 — Core Technical Architecture): new `docs/PHASE2-CORE-TECHNICAL-ARCHITECTURE.md` closes the Phase 2 gap `rao-001` left partial. Part A (Architecture): Plugin Architecture dependency-direction rule, Service-Oriented Architecture convention, SOLID principles mapping, expanded Module Responsibilities, Agent Engine internals (Registry/Lifecycle/Runner + concurrency model), Workflow Engine (one state machine shared by agent-run and ticket-status workflows), a concrete Event Bus design on `ActiveSupport::Notifications` (resolving `WORKFLOW.md` §15's forward-looking flag), Conversation/Memory/Prompt architecture. Part B (Cross-Cutting Strategies): Background Job (ActiveJob, adapter-agnostic, informed by `redmineflux_devops` precedent), Queue, Cache, Retry, Logging, Configuration, Error Handling, Security (code-level enforcement mapping for `docs/SECURITY-COMPLIANCE-OVERVIEW.md`), Performance, and Scalability strategies. All three gates approved at docs-scope, with three findings carried forward as mandatory future-implementation requirements (Event Bus subscribers must be non-blocking; ConcurrencyGuard must be atomic; cache invalidation needs insert+delete test coverage). Counter advanced to 8; next task is `rao-008` for Phase 3. Ticket currently sits in `backlog/specification/`, awaiting close-out.
 - 2026-07-02 — Closed `rao-003`, `rao-004`, `rao-005`, `rao-006`: all four moved from `backlog/specification/` → `backlog/done/`, Status set to `done` on each, Done sections filled with deliverable verification (`docs/USER-ROLES-AND-STORIES.md`, `VISION.md` Multi-Agent Collaboration Overview, `VISION.md` MCP Vision + `docs/SECURITY-COMPLIANCE-OVERVIEW.md`, `docs/PRODUCT-ROADMAP.md` — all re-confirmed present on disk). `backlog/specification/` is now empty; all six Phase 1 tickets (`rao-001`–`rao-006`) are closed. Two carried-forward requirements are logged for future tasks, not blocking this closure: a build-time zero-outbound-network-call test for the Mock AI Provider (Phase 12) and the v1→v2 vendor/DPA review gate (tracked in `docs/PRODUCT-ROADMAP.md`).
 - 2026-07-02 — Closed `rao-002`: moved `backlog/specification/rao-002-task-phase1-vision-goals-scope.md` → `backlog/done/`, Status set to `done`. `VISION.md`'s Business Goals, Project Scope, and Assumptions & Constraints sections re-verified present at close-out.
 - 2026-07-02 — Closed `rao-001`: moved `backlog/specification/rao-001-task-phase1-foundation-specification.md` → `backlog/done/`, Status set to `done`, Done section filled (no PR — documentation-only task, committed directly to `main` per developer instruction). All Planning deliverables re-verified present on disk at close-out. Note: the 5 open questions in `docs/PHASE1-SPECIFICATION.md` §7 remain unresolved and still block Phase 10 — closing this ticket does not close those questions.
