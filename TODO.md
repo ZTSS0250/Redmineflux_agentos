@@ -1,8 +1,8 @@
 # TODO.md — redmineflux_agentos Task Index
 
 **Project Key**: `rao`
-**Next Task Number**: See `backlog/.counter` (current: 8)
-**Status**: See [ROADMAP.md](ROADMAP.md) for the full 16-phase roadmap and per-phase status. Phase 1 and Phase 2 are fully done and closed (7 tickets). Next up: Phase 3 — Mock AI Provider Foundation (`rao-008`).
+**Next Task Number**: See `backlog/.counter` (current: 9)
+**Status**: See [ROADMAP.md](ROADMAP.md) for the full 16-phase roadmap and per-phase status. Phases 1, 2, and 3 are fully specified and closed (8 tickets). Next up: Phase 5 — Folder Structure & Plugin Organization (`rao-009`).
 
 ---
 
@@ -35,14 +35,21 @@ Read in this order: [VISION.md](VISION.md) → [docs/PHASE1-SPECIFICATION.md](do
 
 `rao-001` retroactively satisfies ROADMAP.md Phases 4, 7, and 9 in full, and *partially* satisfies Phase 6 (see ROADMAP.md's coverage note — still open). `rao-002`..`rao-006` together now fully and individually satisfy every Phase 1 deliverable. `rao-007` fully satisfies Phase 2 (superseding the earlier "partial" status).
 
-**Blocking Phase 10 (plugin skeleton)**: 5 open questions in `docs/PHASE1-SPECIFICATION.md` §7 (LLM provider, background job backend, MCP transport, confirmation UX, code-writing-agent scope reservation).
+**Blocking Phase 10 (plugin skeleton)**: 5 open questions in `docs/PHASE1-SPECIFICATION.md` §7 (LLM provider, background job backend, MCP transport, confirmation UX, code-writing-agent scope reservation). Note: `rao-007`'s Background Job Strategy effectively answers question #2 by precedent (plain `ActiveJob`, adapter-agnostic), but the question is formally still open pending developer sign-off.
+
+## Current: Phase 3 — Mock AI Provider Foundation (fully covered AND closed)
+
+| ID | Title | Status | Complexity |
+|----|-------|--------|------------|
+| rao-008 | Phase 3 — Mock AI Provider Foundation (Provider Interface, Mock implementation, Prompt Template Library, deterministic fixture strategy, token/cost simulation) | `backlog/done/` ✅ | HIGH |
+
+Deliverable: [docs/PHASE3-MOCK-AI-PROVIDER-FOUNDATION.md](docs/PHASE3-MOCK-AI-PROVIDER-FOUNDATION.md). This is the foundational contract every future real LLM provider (v2, `docs/PRODUCT-ROADMAP.md`) and every agent-execution path is written against — no real LLM integration in v1, zero external data egress. One finding was carried forward as a **mandatory** requirement for whichever future task implements the first real provider: `active_provider != "mock"` must require non-nil, validated credentials before activation (never silently inherit the Mock Provider's `credentials: nil` allowance).
 
 ---
 
 ## Upcoming (not yet spec'd)
 
-- **rao-008** — ROADMAP.md Phase 3: Mock AI Provider Foundation (provider interface, prompt management, fixture-based mock responses, token/cost simulation) — **next task to open**
-- Phase 5 — Folder Structure & Plugin Organization (not yet spec'd)
+- **rao-009** — ROADMAP.md Phase 5: Folder Structure & Plugin Organization — **next task to open**
 - Phase 6 (expansion) — per-agent memory/context/prompt-binding/state-machine detail beyond what `docs/AGENTS.md` currently covers
 - Phase 8 — Workflow Engine & Orchestration (not yet spec'd — note: `rao-007`'s Workflow Engine section is the internal state-machine design; Phase 8 is the broader orchestration model: parallel/sequential execution rules, scheduling, pause/resume)
 - Phase 10 — Plugin skeleton (`init.rb`, empty module structure, routes, permission registration, menu entries)
@@ -53,6 +60,9 @@ Read in this order: [VISION.md](VISION.md) → [docs/PHASE1-SPECIFICATION.md](do
 
 ## Changelog
 
+- 2026-07-02 — Closed `rao-008`: moved `backlog/specification/rao-008-task-phase3-mock-ai-provider-foundation.md` → `backlog/done/`, Status set to `done`, Done section filled. `docs/PHASE3-MOCK-AI-PROVIDER-FOUNDATION.md` re-verified present at close-out, including the Gate 1 revision-pass fixes. `backlog/specification/` is now empty again — all eight tickets across Phase 1, 2, and 3 are closed in `backlog/done/`.
+- 2026-07-02 — Revised `rao-008` before close-out: a follow-up review of `docs/PHASE3-MOCK-AI-PROVIDER-FOUNDATION.md` found and fixed a genuine correctness bug (multiple `tool_calls` from one turn would collide on one shared `idempotency_key`, causing `Mcp::Executor` to silently drop all but the first — now fixed with per-call `{idempotency_key}-{n}` suffixing) plus three completeness gaps: added a `memory_updates` field to the Standard Response Model (previously nothing defined what the Runner's "write memory updates" step actually writes), made fixture selection round-aware for categories like Clarification Questions (previously contradicted the no-conditionals templating rule), and tightened `latency_ms` to a fixed, non-randomized value (previously ambiguous, risked breaking determinism). Also added a concrete fixture file shape/example to §7. Logged as a Gate 1 revision pass in `rao-008`, not a silent edit.
+- 2026-07-02 — Spec'd `rao-008` (ROADMAP.md Phase 3 — Mock AI Provider Foundation): new `docs/PHASE3-MOCK-AI-PROVIDER-FOUNDATION.md` defines the Provider Interface (standard request/response/error/capability/configuration models), the Mock AI Provider's internal architecture and full lifecycle, Provider-specific detail on Conversation Flow and Agent Execution Flow (extending `rao-007`), Prompt Management and the 11-category Prompt Template Library, the Mock Response Strategy (12 deterministic fixture-based scenarios) with generation rules for fake requirement analysis/ticket generation/dependency mapping/agent collaboration, Token Usage & Cost Simulation (fixture-declared, never runtime-computed, to guarantee determinism), Provider-specific Logging/Error Handling/Configuration extensions, and the Future Migration Plan's concrete mechanics. Performed the required Documentation Updates review: `CLAUDE.md` and `docs/PHASE1-SPECIFICATION.md` companion-doc lists updated; `VISION.md` checked and found already consistent (no edit needed); no new documents proposed beyond the one created. All three gates approved at docs-scope, with one finding carried forward as a mandatory future-implementation requirement (real providers must require validated, non-nil credentials before activation — never inherit Mock's `credentials: nil` allowance). Counter advanced to 9; next task is `rao-009` for Phase 5 (Folder Structure & Plugin Organization). Ticket currently sits in `backlog/specification/`, awaiting close-out.
 - 2026-07-02 — Closed `rao-007`: moved `backlog/specification/rao-007-task-phase2-core-technical-architecture.md` → `backlog/done/`, Status set to `done`, Done section filled. `docs/PHASE2-CORE-TECHNICAL-ARCHITECTURE.md` re-verified present at close-out. `backlog/specification/` is now empty again — all seven tickets across Phase 1 and Phase 2 are closed in `backlog/done/`.
 - 2026-07-02 — Spec'd `rao-007` (ROADMAP.md Phase 2 — Core Technical Architecture): new `docs/PHASE2-CORE-TECHNICAL-ARCHITECTURE.md` closes the Phase 2 gap `rao-001` left partial. Part A (Architecture): Plugin Architecture dependency-direction rule, Service-Oriented Architecture convention, SOLID principles mapping, expanded Module Responsibilities, Agent Engine internals (Registry/Lifecycle/Runner + concurrency model), Workflow Engine (one state machine shared by agent-run and ticket-status workflows), a concrete Event Bus design on `ActiveSupport::Notifications` (resolving `WORKFLOW.md` §15's forward-looking flag), Conversation/Memory/Prompt architecture. Part B (Cross-Cutting Strategies): Background Job (ActiveJob, adapter-agnostic, informed by `redmineflux_devops` precedent), Queue, Cache, Retry, Logging, Configuration, Error Handling, Security (code-level enforcement mapping for `docs/SECURITY-COMPLIANCE-OVERVIEW.md`), Performance, and Scalability strategies. All three gates approved at docs-scope, with three findings carried forward as mandatory future-implementation requirements (Event Bus subscribers must be non-blocking; ConcurrencyGuard must be atomic; cache invalidation needs insert+delete test coverage). Counter advanced to 8; next task is `rao-008` for Phase 3. Ticket currently sits in `backlog/specification/`, awaiting close-out.
 - 2026-07-02 — Closed `rao-003`, `rao-004`, `rao-005`, `rao-006`: all four moved from `backlog/specification/` → `backlog/done/`, Status set to `done` on each, Done sections filled with deliverable verification (`docs/USER-ROLES-AND-STORIES.md`, `VISION.md` Multi-Agent Collaboration Overview, `VISION.md` MCP Vision + `docs/SECURITY-COMPLIANCE-OVERVIEW.md`, `docs/PRODUCT-ROADMAP.md` — all re-confirmed present on disk). `backlog/specification/` is now empty; all six Phase 1 tickets (`rao-001`–`rao-006`) are closed. Two carried-forward requirements are logged for future tasks, not blocking this closure: a build-time zero-outbound-network-call test for the Mock AI Provider (Phase 12) and the v1→v2 vendor/DPA review gate (tracked in `docs/PRODUCT-ROADMAP.md`).

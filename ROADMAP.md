@@ -16,7 +16,7 @@ See [WORKFLOW.md](WORKFLOW.md) for the end-to-end workflow narrative (how these 
 |---|---|---|---|---|
 | 1 | Product Functional Specification | Docs | ✅ Fully covered — 5 discrete tickets, individually gated | `rao-001` (bundled baseline) + `rao-002`..`rao-006` (per-deliverable breakdown) |
 | 2 | Core Technical Architecture | Docs | ✅ Fully covered | `rao-001` (baseline) + `rao-007` (deepened: Agent Engine, Workflow Engine, Event Bus, Conversation/Memory/Prompt architecture, 10 cross-cutting strategies) |
-| 3 | Mock AI Provider Foundation | Docs | 🔜 Next up — not yet spec'd | unassigned (`rao-008`) |
+| 3 | Mock AI Provider Foundation | Docs | ✅ Fully covered | `rao-008` |
 | 4 | Database Design | Docs | ✅ Retroactively covered | `rao-001` |
 | 5 | Folder Structure & Plugin Organization | Docs | ⏳ Not yet spec'd | unassigned |
 | 6 | Agent Architecture (per-agent detail) | Docs | ⚠️ Partially covered — needs expansion | `rao-001` (partial), gap noted below |
@@ -37,7 +37,9 @@ See [WORKFLOW.md](WORKFLOW.md) for the end-to-end workflow narrative (how these 
 
 **Phase 1 breakdown (2026-07-02)**: Phase 1's deliverable list has been broken into 5 individually-gated tickets that supersede the informal "retroactively covered" label — `rao-002` (Product Vision, Business Goals, Project Scope, Success Criteria, Assumptions & Constraints), `rao-003` (Functional/Non-Functional Requirements, User Roles & Personas, User Stories), `rao-004` (AI-Assisted Development Workflow, Multi-Agent Collaboration Overview), `rao-005` (MCP Vision, Security & Compliance Overview), `rao-006` (High-Level Architecture, Product Roadmap v1→v2→v3). Each ticket cites already-approved content where it existed and adds genuinely new documents/sections where it didn't (`docs/USER-ROLES-AND-STORIES.md`, `docs/SECURITY-COMPLIANCE-OVERVIEW.md`, `docs/PRODUCT-ROADMAP.md`, plus five new sections in `VISION.md`). All five passed their three-gate review at docs-scope and sit in `backlog/specification/`.
 
-**Next action**: Phase 3 — Mock AI Provider Foundation is the first fully un-spec'd phase in sequence and should be the next backlog task opened (`rao-008` — counter advanced to 8 after `rao-007` closed the Phase 2 gap).
+**Phase 3 completion (2026-07-02)**: `rao-008` fully specifies Phase 3 — `docs/PHASE3-MOCK-AI-PROVIDER-FOUNDATION.md` defines the Provider Interface (standard request/response/error/capability/configuration models), the Mock AI Provider's internal architecture and lifecycle, Provider-specific detail on Conversation Flow and Agent Execution Flow, Prompt Management and the 11-category Prompt Template Library, the Mock Response Strategy (12 scenarios) with deterministic fake-data generation rules, Token/Cost Simulation (fixture-declared, not runtime-computed), Provider-specific Logging/Error Handling/Configuration, and the Future Migration Plan's mechanics. Phase 3 is now fully covered.
+
+**Next action**: Phase 5 — Folder Structure & Plugin Organization is the next fully un-spec'd *documentation* phase in sequence (Phase 4, 7, 9 already covered by `rao-001`; Phase 6 is partially covered — see the coverage note above). Counter advanced to 9 after `rao-008` closed the Phase 3 gap; the next task opened should be `rao-009`.
 
 ---
 

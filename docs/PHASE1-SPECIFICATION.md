@@ -1,7 +1,7 @@
 # Phase 1 Specification — redmineflux_agentos
 
 **Status**: Draft, awaiting developer approval. No code exists yet.
-**Companion docs**: [AGENTS.md](AGENTS.md) · [DATABASE-SCHEMA.md](DATABASE-SCHEMA.md) · [MCP-TOOLS.md](MCP-TOOLS.md) · [UI-WIREFRAMES.md](UI-WIREFRAMES.md) · [USER-ROLES-AND-STORIES.md](USER-ROLES-AND-STORIES.md) · [SECURITY-COMPLIANCE-OVERVIEW.md](SECURITY-COMPLIANCE-OVERVIEW.md) · [PRODUCT-ROADMAP.md](PRODUCT-ROADMAP.md) · [PHASE2-CORE-TECHNICAL-ARCHITECTURE.md](PHASE2-CORE-TECHNICAL-ARCHITECTURE.md) · [../ROADMAP.md](../ROADMAP.md) · [../WORKFLOW.md](../WORKFLOW.md)
+**Companion docs**: [AGENTS.md](AGENTS.md) · [DATABASE-SCHEMA.md](DATABASE-SCHEMA.md) · [MCP-TOOLS.md](MCP-TOOLS.md) · [UI-WIREFRAMES.md](UI-WIREFRAMES.md) · [USER-ROLES-AND-STORIES.md](USER-ROLES-AND-STORIES.md) · [SECURITY-COMPLIANCE-OVERVIEW.md](SECURITY-COMPLIANCE-OVERVIEW.md) · [PRODUCT-ROADMAP.md](PRODUCT-ROADMAP.md) · [PHASE2-CORE-TECHNICAL-ARCHITECTURE.md](PHASE2-CORE-TECHNICAL-ARCHITECTURE.md) · [PHASE3-MOCK-AI-PROVIDER-FOUNDATION.md](PHASE3-MOCK-AI-PROVIDER-FOUNDATION.md) · [../ROADMAP.md](../ROADMAP.md) · [../WORKFLOW.md](../WORKFLOW.md)
 
 **§2 (Architecture) is deepened by** [PHASE2-CORE-TECHNICAL-ARCHITECTURE.md](PHASE2-CORE-TECHNICAL-ARCHITECTURE.md) — that document adds Agent Engine internals, the Event Bus, and the ten cross-cutting engineering strategies; this document's §2.1/§2.2/§2.3 remain the baseline layered view, module table, and architectural decisions.
 
