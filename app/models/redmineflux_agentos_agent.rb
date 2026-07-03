@@ -15,4 +15,19 @@ class RedminefluxAgentosAgent < ActiveRecord::Base
   validates :key, presence: true, uniqueness: true
   validates :name, presence: true
   validates :status, inclusion: { in: STATUSES }
+
+  # The agent's MCP tool allow-list (docs/AGENTS.md, "tools" — an explicit
+  # allow-list of MCP tools) — one of the "model override, temperature,
+  # tool allow-list" fields docs/DATABASE-SCHEMA.md already documents
+  # `config_json` as carrying. Least-privilege default: an agent with no
+  # `config_json`, or no `tool_allowlist` key within it, may call no
+  # tools at all — never treated as "unrestricted."
+  def tool_allowlist
+    return [] if config_json.blank?
+
+    parsed = JSON.parse(config_json)
+    Array(parsed['tool_allowlist'])
+  rescue JSON::ParserError
+    []
+  end
 end

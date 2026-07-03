@@ -9,6 +9,9 @@ class RedminefluxAgentosMcpToolCall < ActiveRecord::Base
 
   validates :tool_name, presence: true
   validates :status, inclusion: { in: STATUSES }
+  # idempotency_key column added by rao-018 (Phase 13) — see that
+  # migration's comment for why it wasn't in the original schema.
+  validates :idempotency_key, uniqueness: true, allow_nil: true
 
   # redmineflux_agentos_audit_logs is the immutable record
   # (docs/PHASE4-DATABASE-DESIGN.md §9) — this table is intentionally

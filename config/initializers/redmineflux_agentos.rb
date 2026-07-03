@@ -40,6 +40,19 @@ Rails.application.config.to_prepare do
     RedminefluxAgentos::Agents::ReportingAgent
   ].each { |agent_class| RedminefluxAgentos::Engine::AgentEngine::Registry.register(agent_class) }
 
+  # --- MCP tool registration (docs/PHASE7-MCP-ARCHITECTURE.md §2) ---
+  # `ToolRegistry.register` raises at boot if any entry is missing a
+  # `params_schema` (rao-012 Gate 3 finding #1) — a tool file with a typo'd
+  # or omitted schema fails plugin boot, not a silent per-request gap.
+  [
+    RedminefluxAgentos::Mcp::Tools::ProjectTools,
+    RedminefluxAgentos::Mcp::Tools::IssueTools,
+    RedminefluxAgentos::Mcp::Tools::WikiTools,
+    RedminefluxAgentos::Mcp::Tools::FileTools,
+    RedminefluxAgentos::Mcp::Tools::TimeTools,
+    RedminefluxAgentos::Mcp::Tools::ReportingTools
+  ].each(&:register!)
+
   # --- Redmine-core association extension (docs/PHASE4-DATABASE-DESIGN.md §10) ---
   # Standard Redmine plugin practice — a runtime association addition, not a
   # core-file edit. One-directional: destroying a Project/Issue cleans up

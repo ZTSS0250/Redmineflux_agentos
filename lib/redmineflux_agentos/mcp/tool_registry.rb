@@ -11,13 +11,19 @@ module RedminefluxAgentos
       @tools = {}
 
       class << self
-        def register(tool_name, category:, handler:, params_schema:, requires_confirmation: false, read_only: false)
+        def register(tool_name, category:, handler:, params_schema:, authorize: nil, requires_confirmation: false,
+                     read_only: false)
           raise ArgumentError, "#{tool_name}: params_schema must not be empty" if params_schema.blank?
 
           @tools[tool_name.to_sym] = {
             category: category,
             handler: handler,
             params_schema: params_schema,
+            # Layer 1 of the Permission Model (docs/PHASE7-MCP-ARCHITECTURE.md
+            # §3) — a `->(actor, params) { true/false }` proc, since only a
+            # tool's own registration knows how to resolve its target
+            # Project/Issue from `params` (Mcp::Executor stays generic).
+            authorize: authorize,
             requires_confirmation: requires_confirmation,
             read_only: read_only
           }
@@ -27,8 +33,21 @@ module RedminefluxAgentos
           @tools[tool_name.to_sym]
         end
 
+        # @param agent [RedminefluxAgentosAgent]
+        # @return [Array<Symbol>] tool names this agent may call — the
+        #   intersection of what's actually registered and the agent's
+        #   own declared allow-list (docs/AGENTS.md "tools"). An agent
+        #   whose allow-list references a tool that was never registered
+        #   (a stale config) never sees it here rather than raising.
         def tools_for(agent)
-          raise NotImplementedError, 'Scoping tools to an agent tool_allowlist is implemented in Phase 13 (rao-018)'
+          allowed = agent.tool_allowlist.map(&:to_sym)
+          @tools.keys & allowed
+        end
+
+        # Test-only reset — Minitest runs share process state across
+        # tests, and registry entries are otherwise boot-time-only.
+        def clear!
+          @tools = {}
         end
       end
     end
