@@ -44,6 +44,7 @@ module RedminefluxAgentos
           RedminefluxAgentosPromptTemplate.where(key: key, is_active: true).update_all(is_active: false)
           RedminefluxAgentosPromptTemplate.find(version_id).update!(is_active: true)
         end
+        RedminefluxAgentos::Prompts::TemplateResolver.invalidate!(key)
       end
 
       def create_new_draft!(current, content)
@@ -61,6 +62,7 @@ module RedminefluxAgentos
             created_by_id: User.current.id
           )
         end
+        RedminefluxAgentos::Prompts::TemplateResolver.invalidate!(current.key)
       end
     end
   end

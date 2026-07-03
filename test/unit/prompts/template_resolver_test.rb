@@ -6,6 +6,7 @@ require 'ostruct'
 class TemplateResolverTest < ActiveSupport::TestCase
   def setup
     RedminefluxAgentosPromptTemplate.clear!
+    Rails.cache.clear
   end
 
   def test_resolves_shared_template_with_interpolation
@@ -61,5 +62,55 @@ class TemplateResolverTest < ActiveSupport::TestCase
     assert_raises(RedminefluxAgentos::PromptVariableMissingError) do
       RedminefluxAgentos::Prompts::TemplateResolver.resolve('stale.default', variables: {})
     end
+  end
+
+  # rao-021 (Phase 16 §B.3): explicit-invalidation cache on the active
+  # template per key. `Admin::PromptTemplatesController#activate!`/
+  # `#create_new_draft!` both call `invalidate!` after their transaction
+  # commits — these tests exercise `TemplateResolver` directly, the same
+  # boundary that controller actually calls across.
+  def test_resolve_only_queries_once_across_repeated_calls
+    RedminefluxAgentosPromptTemplate.create!(key: 'cached.default', agent_id: nil, is_active: true,
+                                              content: 'v1', variables_json: [].to_json)
+    # Captured BEFORE `expects` stubs the method — calling the real
+    # `.where` as part of setting up its own stub's `.returns(...)` value
+    # would count as an invocation against the `.once` limit set up on
+    # the very next line, always failing "invoked twice" regardless of
+    # how many times the code under test actually calls it.
+    real_scope = RedminefluxAgentosPromptTemplate.where(key: 'cached.default', is_active: true)
+
+    RedminefluxAgentosPromptTemplate.expects(:where).with(key: 'cached.default', is_active: true)
+                                     .once.returns(real_scope)
+
+    2.times { RedminefluxAgentos::Prompts::TemplateResolver.resolve('cached.default', variables: {}) }
+  end
+
+  def test_invalidate_forces_a_fresh_read_reflecting_a_newly_activated_version
+    RedminefluxAgentosPromptTemplate.create!(key: 'versioned.default', agent_id: nil, version: 1, is_active: true,
+                                              content: 'v1', variables_json: [].to_json)
+    assert_equal 'v1', RedminefluxAgentos::Prompts::TemplateResolver.resolve('versioned.default', variables: {})
+
+    # Same shape as Admin::PromptTemplatesController#activate!: deactivate
+    # the old row, activate a new one, for the SAME key.
+    RedminefluxAgentosPromptTemplate.where(key: 'versioned.default', is_active: true).update_all(is_active: false)
+    RedminefluxAgentosPromptTemplate.create!(key: 'versioned.default', agent_id: nil, version: 2, is_active: true,
+                                              content: 'v2', variables_json: [].to_json)
+    RedminefluxAgentos::Prompts::TemplateResolver.invalidate!('versioned.default')
+
+    assert_equal 'v2', RedminefluxAgentos::Prompts::TemplateResolver.resolve('versioned.default', variables: {})
+  end
+
+  def test_without_invalidate_the_stale_version_keeps_being_served
+    RedminefluxAgentosPromptTemplate.create!(key: 'stale_cache.default', agent_id: nil, version: 1, is_active: true,
+                                              content: 'v1', variables_json: [].to_json)
+    assert_equal 'v1', RedminefluxAgentos::Prompts::TemplateResolver.resolve('stale_cache.default', variables: {})
+
+    RedminefluxAgentosPromptTemplate.where(key: 'stale_cache.default', is_active: true).update_all(is_active: false)
+    RedminefluxAgentosPromptTemplate.create!(key: 'stale_cache.default', agent_id: nil, version: 2, is_active: true,
+                                              content: 'v2', variables_json: [].to_json)
+    # No invalidate! call here.
+
+    assert_equal 'v1', RedminefluxAgentos::Prompts::TemplateResolver.resolve('stale_cache.default', variables: {}),
+                 'without invalidate!, the cache must keep serving the pre-activation version'
   end
 end

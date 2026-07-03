@@ -51,4 +51,23 @@ class EventBusTest < ActiveSupport::TestCase
 
     assert_operator elapsed_ms, :<, 50, 'a fast, non-blocking subscriber should not measurably delay publish'
   end
+
+  # rao-021: the health check ("Event Bus subscribers registered")
+  # confirms `config/initializers/redmineflux_agentos.rb`'s `to_prepare`
+  # block actually ran, via this tracking method.
+  def test_subscribed_events_tracks_every_subscription
+    RedminefluxAgentos::Engine::EventBus.subscribe('rao021_test_event') { |*| nil }
+    assert_includes RedminefluxAgentos::Engine::EventBus.subscribed_events, 'rao021_test_event'
+  end
+
+  def test_the_real_boot_time_subscriptions_are_registered
+    # config/initializers/redmineflux_agentos.rb's to_prepare block has
+    # already run by the time the test suite boots — this is exactly what
+    # HealthController#show checks for in production.
+    subscribed = RedminefluxAgentos::Engine::EventBus.subscribed_events
+    %w[issue.status_changed agent_run.running agent_run.completed agent_run.dead
+       mcp_tool_call.pending_confirmation].each do |event_name|
+      assert_includes subscribed, event_name
+    end
+  end
 end

@@ -10,12 +10,25 @@ module RedminefluxAgentos
     # requirement, not advisory (rao-007 Gate 2 finding #1). The event
     # catalog is WORKFLOW.md §15 — not duplicated here.
     module EventBus
+      @subscribed_events = []
+
       def self.publish(event_name, payload = {})
         ActiveSupport::Notifications.instrument("agentos.#{event_name}", payload)
       end
 
       def self.subscribe(event_name, &block)
+        @subscribed_events << event_name.to_s
         ActiveSupport::Notifications.subscribe("agentos.#{event_name}", &block)
+      end
+
+      # rao-021: the health check ("Event Bus subscribers registered")
+      # needs a way to confirm `config/initializers/redmineflux_agentos.rb`'s
+      # `to_prepare` block actually ran and registered its subscribers —
+      # `ActiveSupport::Notifications`' own subscriber list isn't a stable
+      # public API to introspect, so this tracks it directly at the one
+      # place a subscription can be created.
+      def self.subscribed_events
+        @subscribed_events.dup
       end
     end
   end

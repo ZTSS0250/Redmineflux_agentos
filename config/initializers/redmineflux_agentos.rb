@@ -94,4 +94,24 @@ Rails.application.config.to_prepare do
     issue = payload[:record]
     RedminefluxAgentos::Engine::DependencyEngine::Scheduler.on_issue_closed(issue) if issue&.status&.is_closed?
   end
+
+  # rao-021 (Phase 16) — NotificationCenter (WORKFLOW.md §23). Each
+  # handler only resolves a recipient list and enqueues mail delivery
+  # (`.deliver_later`), matching this subscriber block's own
+  # fast/non-blocking requirement (comment above).
+  RedminefluxAgentos::Engine::EventBus.subscribe('agent_run.running') do |*, payload|
+    RedminefluxAgentos::NotificationCenter.agent_started(payload[:record])
+  end
+
+  RedminefluxAgentos::Engine::EventBus.subscribe('agent_run.completed') do |*, payload|
+    RedminefluxAgentos::NotificationCenter.agent_completed(payload[:record])
+  end
+
+  RedminefluxAgentos::Engine::EventBus.subscribe('agent_run.dead') do |*, payload|
+    RedminefluxAgentos::NotificationCenter.agent_dead(payload[:record])
+  end
+
+  RedminefluxAgentos::Engine::EventBus.subscribe('mcp_tool_call.pending_confirmation') do |*, payload|
+    RedminefluxAgentos::NotificationCenter.approval_needed(payload[:record])
+  end
 end

@@ -57,7 +57,18 @@ Redmine::Plugin.register :redmineflux_agentos do
   # Administration-scope permissions — also registered globally so the
   # Administration > AgentOS menu (below) can gate on them independently
   # of any single project's module state (docs/PHASE1-SPECIFICATION.md §5).
-  permission :manage_agentos, {}, require: :admin
+  # rao-021 Phase 16 RBAC audit finding: `admin/audit_logs` was wired into
+  # the admin menu and routes but never declared under any permission —
+  # every request failed closed (unreachable by ANY user, including
+  # admins) because Redmine's `authorize_global` denies actions with no
+  # matching permission declaration. `manage_agentos` ("Full
+  # administrative control", docs/PHASE1-SPECIFICATION.md §5) is the
+  # correct fit: audit log visibility is an administrative concern, and
+  # this permission is already the one Admin::BaseController-derived
+  # controllers with no more specific permission would be gated by.
+  permission :manage_agentos,
+             { 'redmineflux_agentos/admin/audit_logs' => %i[index show] },
+             require: :admin
   permission :manage_ai_agents,
              { 'redmineflux_agentos/admin/agents' => %i[index edit update] },
              require: :admin

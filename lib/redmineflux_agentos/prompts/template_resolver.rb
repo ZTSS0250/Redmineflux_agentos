@@ -10,11 +10,17 @@ module RedminefluxAgentos
     # syntax as Mock Provider fixtures, docs/PHASE3-MOCK-AI-PROVIDER-FOUNDATION.md
     # §6).
     #
-    # Scope note: no explicit-invalidation cache (§B.3) yet — every call
-    # reads through to the DB. Caching is a pure performance layer on top
-    # of already-correct behavior; adding it can't fix a correctness gap,
-    # so it's deferred rather than adding complexity this ticket doesn't
-    # strictly need to satisfy its own Objectives.
+    # rao-021 (Phase 16 §B.3): the active template per key is now
+    # `Rails.cache`-backed, explicit-invalidation only (never time-based,
+    # per docs/PHASE1-SPECIFICATION.md §1.3's NFR). A generation counter
+    # per `key` — not a direct cache write from the resolver — is what
+    # gets invalidated: `Admin::PromptTemplatesController#activate!` and
+    # `#create_new_draft!` both use `update_all` for the deactivation
+    # half of their transaction, which skips AR callbacks entirely, so an
+    # `after_save` hook on the model would silently miss exactly the write
+    # this cache most needs to react to. A generation counter sidesteps
+    # that: invalidation is one `Rails.cache.increment`, no enumeration of
+    # which agent-scoped cache entries currently exist for `key` required.
     #
     # "No active template found for this key" reuses
     # `PromptVariableMissingError` rather than a new error class — no
@@ -31,7 +37,7 @@ module RedminefluxAgentos
         # @param variables [Hash] string or symbol keys accepted
         # @return [String] the composed prompt
         def resolve(key, agent: nil, variables: {})
-          template = active_template(key, agent)
+          template = cached_active_template(key, agent)
           unless template
             raise RedminefluxAgentos::PromptVariableMissingError,
                   "No active prompt template found for key '#{key}'"
@@ -41,7 +47,27 @@ module RedminefluxAgentos
           interpolate(template.content, variables)
         end
 
+        # Called by `Admin::PromptTemplatesController` after any write
+        # that changes which row is active for `key` (activation, or a
+        # new draft superseding the previous active version) — both
+        # insert and "delete" (deactivate) paths invalidate the same way.
+        def invalidate!(key)
+          Rails.cache.increment(generation_cache_key(key), 1, initial: 1)
+        end
+
         private
+
+        def cached_active_template(key, agent)
+          generation = Rails.cache.fetch(generation_cache_key(key)) { 1 }
+          agent_scope = agent&.id || 'shared'
+          Rails.cache.fetch("redmineflux_agentos/prompt_template/#{key}/#{agent_scope}/gen#{generation}") do
+            active_template(key, agent)
+          end
+        end
+
+        def generation_cache_key(key)
+          "redmineflux_agentos/prompt_template_generation/#{key}"
+        end
 
         def active_template(key, agent)
           scope = RedminefluxAgentosPromptTemplate.where(key: key.to_s, is_active: true)

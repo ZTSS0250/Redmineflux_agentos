@@ -36,9 +36,18 @@ module RedminefluxAgentos
         #   (docs/PHASE3-MOCK-AI-PROVIDER-FOUNDATION.md §2.1/§2.5)
         # @param agent [RedminefluxAgentosAgent, nil] the calling agent,
         #   for Layer 2 — nil for a human-initiated call
+        # @param agent_run [RedminefluxAgentosAgentRun, nil] rao-021
+        #   addition (backward-compatible, additive, defaults to nil like
+        #   `agent:` above) — the run that triggered this call, when one
+        #   exists. Threaded through to `mcp_tool_calls.agent_run_id`,
+        #   which nothing populated before rao-021 (every row had a null
+        #   FK regardless of caller) — closing that gap is what lets
+        #   `NotificationCenter.approval_needed` resolve a project (and
+        #   so a recipient list) from a `pending_confirmation` row at
+        #   all, per WORKFLOW.md §23.
         # @return [Hash] `{status:, result:, error: nil}` — only ever
         #   returned on success; failure paths raise (see class comment)
-        def call(tool_name:, params:, actor:, idempotency_key: nil, agent: nil)
+        def call(tool_name:, params:, actor:, idempotency_key: nil, agent: nil, agent_run: nil)
           tool_name = tool_name.to_sym
           declaration = ToolRegistry.lookup(tool_name)
           raise ArgumentError, "Unknown MCP tool: #{tool_name}" unless declaration
@@ -51,17 +60,18 @@ module RedminefluxAgentos
             authorize_layer_1!(declaration, actor, params)
             authorize_layer_2!(agent, tool_name)
           rescue RedminefluxAgentos::McpToolError => e
-            record_failure!(tool_name, declaration, params, actor, idempotency_key, e)
+            record_failure!(tool_name, declaration, params, actor, idempotency_key, e, agent_run)
             raise
           end
 
           if declaration[:requires_confirmation]
             record = create_call_row(tool_name, declaration, params, actor, idempotency_key,
-                                      status: 'pending_confirmation')
+                                      status: 'pending_confirmation', agent_run: agent_run)
+            RedminefluxAgentos::Engine::EventBus.publish('mcp_tool_call.pending_confirmation', record: record)
             return { status: :pending_confirmation, result: nil, error: nil }
           end
 
-          execute_and_record(tool_name, declaration, params, actor, idempotency_key, agent)
+          execute_and_record(tool_name, declaration, params, actor, idempotency_key, agent, agent_run)
         end
 
         # Executes a previously `pending_confirmation` call. The original
@@ -174,14 +184,14 @@ module RedminefluxAgentos
                 "#{tool_name} is not in #{agent.key}'s tool_allowlist"
         end
 
-        def execute_and_record(tool_name, declaration, params, actor, idempotency_key, agent)
+        def execute_and_record(tool_name, declaration, params, actor, idempotency_key, agent, agent_run)
           started_at = Time.now
           result = run_handler(declaration, params, actor)
           duration_ms = ((Time.now - started_at) * 1000).round
           result_json = result[:result].to_json
 
           create_call_row(tool_name, declaration, params, actor, idempotency_key,
-                           status: 'executed', result_json: result_json, duration_ms: duration_ms)
+                           status: 'executed', result_json: result_json, duration_ms: duration_ms, agent_run: agent_run)
           record_audit!(declaration, actor, agent, result)
           # Round-tripped through JSON (string-keyed) rather than returning
           # `result[:result]` (whatever key types the handler happened to
@@ -193,7 +203,7 @@ module RedminefluxAgentos
           { status: :executed, result: JSON.parse(result_json), error: nil }
         rescue StandardError => e
           classified = classify(e)
-          record_failure!(tool_name, declaration, params, actor, idempotency_key, classified)
+          record_failure!(tool_name, declaration, params, actor, idempotency_key, classified, agent_run)
           raise classified
         end
 
@@ -211,9 +221,10 @@ module RedminefluxAgentos
           RedminefluxAgentos::McpToolError::UnexpectedError.new(error.message, original: error)
         end
 
-        def record_failure!(tool_name, declaration, params, actor, idempotency_key, error)
+        def record_failure!(tool_name, declaration, params, actor, idempotency_key, error, agent_run = nil)
           create_call_row(tool_name, declaration, params, actor, idempotency_key, status: 'failed',
-                                                                                   result_json: error_payload(error).to_json)
+                                                                                   result_json: error_payload(error).to_json,
+                                                                                   agent_run: agent_run)
         end
 
         def error_payload(error)
@@ -225,10 +236,11 @@ module RedminefluxAgentos
         end
 
         def create_call_row(tool_name, declaration, params, actor, idempotency_key, status:, result_json: nil,
-                             duration_ms: nil)
+                             duration_ms: nil, agent_run: nil)
           RedminefluxAgentosMcpToolCall.create!(
             tool_name: tool_name.to_s,
             user_id: actor&.id,
+            agent_run_id: agent_run&.id,
             params_json: redact(params, declaration[:params_schema]).to_json,
             result_json: result_json,
             status: status,

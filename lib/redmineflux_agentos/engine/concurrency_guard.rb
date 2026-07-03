@@ -44,6 +44,14 @@ module RedminefluxAgentos
             end
           end
 
+          # `:start` (queued -> running) is special-cased in Lifecycle,
+          # bypassing WorkflowEngine::StateMachine entirely — every other
+          # transition publishes its own `agent_run.<status>` event via
+          # the generic machine, but this one previously published
+          # nothing at all, so `agent_run.running` (WORKFLOW.md §23,
+          # "Agent Started") could never fire (rao-021 finding).
+          RedminefluxAgentos::Engine::EventBus.publish('agent_run.running', record: agent_run) if acquired
+
           acquired
         end
 

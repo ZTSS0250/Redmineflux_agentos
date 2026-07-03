@@ -68,7 +68,8 @@ module RedminefluxAgentos
                 params: call[:params] || call['params'] || {},
                 actor: RedminefluxAgentos::SystemUserProvisioner.user,
                 idempotency_key: call[:idempotency_key] || call['idempotency_key'],
-                agent: agent_record
+                agent: agent_record,
+                agent_run: agent_run
               )
             end
           end

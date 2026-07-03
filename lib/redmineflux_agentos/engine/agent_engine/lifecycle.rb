@@ -44,6 +44,12 @@ module RedminefluxAgentos
           def transition(agent_run, event)
             if event.to_sym == :start
               return false if RedminefluxAgentos::Engine::DependencyEngine::Scheduler.paused?(agent_run.project_id)
+              # `agent_run.agent` is a required association in real data
+              # (the model's `belongs_to :agent` has no `optional: true`)
+              # — nil here means test/fixture data that never set one, not
+              # a real-world case this guard needs to police; only a
+              # genuinely-disabled agent blocks the transition.
+              return false if agent_run.agent && !Registry.enabled?(agent_run.agent)
 
               return RedminefluxAgentos::Engine::ConcurrencyGuard.acquire(agent_run)
             end

@@ -53,5 +53,9 @@ RedmineApp::Application.routes.draw do
   # Routed and scoped now so Phase 10's plugin boots with the final shape;
   # no endpoints are declared here until their controllers exist.
   scope '/agentos', defaults: { format: 'json' } do
+    # rao-021: deliberately outside every other route's require_login —
+    # see HealthController's class comment.
+    get 'health', to: 'redmineflux_agentos/health#show'
+    get 'metrics', to: 'redmineflux_agentos/health#metrics'
   end
 end

@@ -188,4 +188,51 @@ class ExecutorTest < ActiveSupport::TestCase
     assert_equal 1, FakeAuditLog.records.size
     assert_equal 'test.done', FakeAuditLog.records.first.action
   end
+
+  # rao-021: `agent_run:` is a new optional keyword — before this,
+  # `mcp_tool_calls.agent_run_id` was never populated by any call path
+  # even though the column/association already existed since rao-016/018.
+  # Closing this gap is what lets `NotificationCenter.approval_needed`
+  # resolve a project (and so a recipient list) from a
+  # `pending_confirmation` row at all (WORKFLOW.md §23).
+  def test_agent_run_id_is_stored_when_provided
+    register_test_tool
+    run = RedminefluxAgentosAgentRun.create!(status: 'running', project_id: 1)
+
+    RedminefluxAgentos::Mcp::Executor.call(
+      tool_name: :redmineflux_agentos_test_tool, params: { value: 1 }, actor: allowed_user,
+      idempotency_key: 'k11', agent_run: run
+    )
+
+    stored = FakeMcpToolCall.find_by(idempotency_key: 'k11')
+    assert_equal run.id, stored.agent_run_id
+  end
+
+  def test_agent_run_id_is_nil_when_not_provided_backward_compatible
+    register_test_tool
+
+    RedminefluxAgentos::Mcp::Executor.call(
+      tool_name: :redmineflux_agentos_test_tool, params: { value: 1 }, actor: allowed_user, idempotency_key: 'k12'
+    )
+
+    stored = FakeMcpToolCall.find_by(idempotency_key: 'k12')
+    assert_nil stored.agent_run_id
+  end
+
+  def test_pending_confirmation_publishes_an_event_carrying_the_agent_run
+    register_test_tool(requires_confirmation: true)
+    run = RedminefluxAgentosAgentRun.create!(status: 'running', project_id: 1)
+    received = []
+    RedminefluxAgentos::Engine::EventBus.subscribe('mcp_tool_call.pending_confirmation') do |*, payload|
+      received << payload[:record]
+    end
+
+    RedminefluxAgentos::Mcp::Executor.call(
+      tool_name: :redmineflux_agentos_test_tool, params: { value: 1 }, actor: allowed_user,
+      idempotency_key: 'k13', agent_run: run
+    )
+
+    assert_equal 1, received.size
+    assert_equal run.id, received.first.agent_run_id
+  end
 end

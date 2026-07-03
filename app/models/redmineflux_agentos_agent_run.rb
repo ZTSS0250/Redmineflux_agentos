@@ -5,6 +5,10 @@ class RedminefluxAgentosAgentRun < ActiveRecord::Base
   # WorkflowEngine::StateMachine (docs/PHASE2-CORE-TECHNICAL-ARCHITECTURE.md
   # §A.6), not enforced by a model-level state machine gem.
   STATUSES = %w[queued running waiting_on_dep completed failed dead cancelled].freeze
+  # docs/PHASE4-DATABASE-DESIGN.md §12 / rao-021: `LogRetentionJob` must
+  # never prune a run's logs before the run itself reaches one of these —
+  # a long-`waiting_on_dep` run's logs must survive regardless of age.
+  TERMINAL_STATUSES = %w[completed failed dead cancelled].freeze
 
   belongs_to :agent, class_name: 'RedminefluxAgentosAgent', foreign_key: 'agent_id'
   belongs_to :project

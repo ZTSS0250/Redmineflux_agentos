@@ -6,6 +6,7 @@ class LifecycleTest < ActiveSupport::TestCase
   def setup
     RedminefluxAgentosAgentRun.clear!
     RedminefluxAgentosConfiguration.clear!
+    Rails.cache.clear
   end
 
   def test_start_transitions_queued_to_running_when_under_cap
@@ -79,5 +80,31 @@ class LifecycleTest < ActiveSupport::TestCase
       assert RedminefluxAgentos::Engine::AgentEngine::Lifecycle.transition(run, :cancel), "cancel from #{status}"
       assert_equal 'cancelled', run.status
     end
+  end
+
+  # rao-021: closes a real enforcement gap found in the Phase 16 RBAC/
+  # config audit — nothing anywhere read `RedminefluxAgentosAgent#status`
+  # before this, so a disabled agent's queued runs would have executed
+  # anyway. `AgentEngine::Registry.enabled?` is the (cached) check.
+  def test_start_denied_for_a_disabled_agent
+    agent = RedminefluxAgentosAgent.create!(key: 'test_disabled_agent', name: 'Test Agent', status: 'disabled')
+    run = RedminefluxAgentosAgentRun.create!(status: 'queued', project_id: 1, agent_id: agent.id)
+
+    refute RedminefluxAgentos::Engine::AgentEngine::Lifecycle.transition(run, :start)
+    assert_equal 'queued', run.status
+  end
+
+  def test_start_allowed_for_an_enabled_agent
+    agent = RedminefluxAgentosAgent.create!(key: 'test_enabled_agent', name: 'Test Agent', status: 'enabled')
+    run = RedminefluxAgentosAgentRun.create!(status: 'queued', project_id: 1, agent_id: agent.id)
+
+    assert RedminefluxAgentos::Engine::AgentEngine::Lifecycle.transition(run, :start)
+    assert_equal 'running', run.status
+  end
+
+  def test_a_run_with_no_agent_set_is_not_blocked_by_the_disabled_agent_guard
+    run = RedminefluxAgentosAgentRun.create!(status: 'queued', project_id: 1)
+
+    assert RedminefluxAgentos::Engine::AgentEngine::Lifecycle.transition(run, :start)
   end
 end

@@ -9,8 +9,8 @@ module RedminefluxAgentos
   # visualization renders from.
   class DependencyDashboardsController < BaseController
     def show
-      task_ids = RedminefluxAgentosAiTask.where(project_id: @project.id).pluck(:id)
-      @edges = RedminefluxAgentosDependency.where(ai_task_id: task_ids)
+      @edges = RedminefluxAgentos::Engine::DependencyEngine::Graph.edges_for_project(@project.id)
+      task_ids = @edges.flat_map { |e| [e.ai_task_id, e.depends_on_ai_task_id] }.uniq
       @tasks_by_id = RedminefluxAgentosAiTask.where(id: task_ids).index_by(&:id)
     end
   end

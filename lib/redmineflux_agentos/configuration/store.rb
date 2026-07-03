@@ -29,7 +29,12 @@ module RedminefluxAgentos
         # Added during rao-019 (Phase 14) for ConcurrencyGuard — Phase 2
         # §B.9 requires configurable caps but never enumerated the keys.
         'global_concurrency_cap' => nil,
-        'project_concurrency_cap' => nil
+        'project_concurrency_cap' => nil,
+        # Added during rao-021 (Phase 16) for NotificationCenter —
+        # WORKFLOW.md §23 requires the "Agent Started" notification
+        # default OFF ("likely noisy") but never enumerated a key name,
+        # same gap as the two concurrency caps above.
+        'notify_on_agent_started' => nil
       }.freeze
 
       class << self
