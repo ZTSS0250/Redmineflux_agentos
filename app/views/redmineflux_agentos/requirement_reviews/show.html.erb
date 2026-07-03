@@ -1,2 +1,15 @@
 <h2><%= l(:label_agentos_requirement_review) %></h2>
-<%= render 'redmineflux_agentos/coming_soon' %>
+
+<% if @project_plan.nil? %>
+  <p class="nodata"><%= l(:label_no_data) %></p>
+<% else %>
+  <p><strong><%= l(:field_status) %>:</strong> <%= @project_plan.status %> (v<%= @project_plan.version %>)</p>
+  <div class="wiki"><%= simple_format(@project_plan.srs_markdown) %></div>
+
+  <% if @project_plan.status == 'pending_approval' %>
+    <%= form_tag(agentos_requirement_review_path(project_id: @project.id), method: :patch) do %>
+      <%= submit_tag l(:button_approve, default: 'Approve'), name: 'approve', value: '1' %>
+      <%= submit_tag l(:button_reject, default: 'Reject'), name: 'approve', value: '0' %>
+    <% end %>
+  <% end %>
+<% end %>

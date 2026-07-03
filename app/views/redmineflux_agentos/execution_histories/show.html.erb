@@ -1,2 +1,55 @@
 <h2><%= l(:label_agentos_execution_history) %></h2>
-<%= render 'redmineflux_agentos/coming_soon' %>
+
+<%= form_tag(agentos_execution_history_path(project_id: @project.id), method: :get) do %>
+  <%= text_field_tag :level, params[:level], placeholder: 'debug/info/warn/error' %>
+  <%= text_field_tag :status, params[:status], placeholder: 'pending_confirmation/executed/rejected/failed' %>
+  <%= submit_tag l(:button_apply, default: 'Filter') %>
+<% end %>
+
+<h3><%= l(:label_agentos_execution_logs, default: 'Execution Logs') %></h3>
+<% if @execution_logs.empty? %>
+  <p class="nodata"><%= l(:label_no_data) %></p>
+<% else %>
+  <table class="list">
+    <thead>
+      <tr>
+        <th><%= l(:field_created_on) %></th>
+        <th><%= l(:label_agentos_level, default: 'Level') %></th>
+        <th><%= l(:field_description) %></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @execution_logs.each do |log| %>
+        <tr>
+          <td><%= format_time(log.created_at) %></td>
+          <td><%= log.level %></td>
+          <td><%= log.message %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
+
+<h3><%= l(:label_agentos_recent_tool_calls, default: 'MCP Tool Calls') %></h3>
+<% if @mcp_tool_calls.empty? %>
+  <p class="nodata"><%= l(:label_no_data) %></p>
+<% else %>
+  <table class="list">
+    <thead>
+      <tr>
+        <th><%= l(:field_created_on) %></th>
+        <th><%= l(:field_tool_name, default: 'Tool') %></th>
+        <th><%= l(:field_status) %></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @mcp_tool_calls.each do |call| %>
+        <tr>
+          <td><%= format_time(call.created_at) %></td>
+          <td><%= call.tool_name %></td>
+          <td><%= call.status %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

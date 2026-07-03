@@ -1,2 +1,34 @@
 <h2><%= l(:label_agentos_admin_settings) %></h2>
-<%= render 'redmineflux_agentos/coming_soon' %>
+
+<table class="list">
+  <thead>
+    <tr>
+      <th><%= l(:label_agentos_key, default: 'Key') %></th>
+      <th><%= l(:label_agentos_value, default: 'Value') %></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @rows.each do |row| %>
+      <tr>
+        <td><%= row[:key] %></td>
+        <td><%= row[:display_value] %></td>
+        <td>
+          <%= form_tag(admin_settings_path(project_id: @scope_project&.id), method: :patch) do %>
+            <%= hidden_field_tag :key, row[:key] %>
+            <%
+              # A sensitive field's input always starts blank — never
+              # pre-filled with the masked indicator or (worse) the real
+              # value — submitting it blank again is a no-op (see
+              # controller), so "leave unchanged" and "clear it" can never
+              # be confused.
+              prefill = row[:sensitive] ? '' : row[:display_value]
+            %>
+            <%= text_field_tag :value, prefill, placeholder: (row[:sensitive] ? l(:label_agentos_replace, default: 'Replace…') : nil) %>
+            <%= submit_tag l(:button_save, default: 'Save') %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

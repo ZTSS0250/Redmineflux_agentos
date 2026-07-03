@@ -1,2 +1,56 @@
 <h2><%= l(:label_agentos_agent_dashboard) %></h2>
-<%= render 'redmineflux_agentos/coming_soon' %>
+
+<h3><%= l(:label_agentos_pending_approvals, default: 'Pending Approvals') %></h3>
+<% if @pending_approvals.empty? %>
+  <p class="nodata"><%= l(:label_agentos_no_pending_approvals, default: 'No tool calls are waiting on approval.') %></p>
+<% else %>
+  <table class="list" id="agentos-pending-approvals">
+    <thead>
+      <tr>
+        <th><%= l(:field_tool_name, default: 'Tool') %></th>
+        <th><%= l(:field_created_on) %></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @pending_approvals.each do |call| %>
+        <tr id="mcp-tool-call-<%= call.id %>">
+          <td><%= call.tool_name %></td>
+          <td><%= format_time(call.created_at) %></td>
+          <td class="buttons">
+            <%= button_to l(:button_approve, default: 'Approve'),
+                          approve_agentos_agent_dashboard_path(project_id: @project.id, id: call.id, mcp_tool_call_id: call.id),
+                          remote: true, class: 'icon icon-yes' %>
+            <%= button_to l(:button_reject, default: 'Reject'),
+                          reject_agentos_agent_dashboard_path(project_id: @project.id, id: call.id, mcp_tool_call_id: call.id),
+                          remote: true, class: 'icon icon-del' %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
+
+<h3><%= l(:label_agentos_agent_runs, default: 'Recent Agent Runs') %></h3>
+<% if @agent_runs.empty? %>
+  <p class="nodata"><%= l(:label_no_data) %></p>
+<% else %>
+  <table class="list">
+    <thead>
+      <tr>
+        <th><%= l(:field_agent, default: 'Agent') %></th>
+        <th><%= l(:field_status) %></th>
+        <th><%= l(:field_created_on) %></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @agent_runs.each do |run| %>
+        <tr>
+          <td><%= link_to run.agent&.name || run.agent_id, agentos_agent_dashboard_path(project_id: @project.id, id: run.agent_id) %></td>
+          <td><%= run.status %></td>
+          <td><%= format_time(run.created_at) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

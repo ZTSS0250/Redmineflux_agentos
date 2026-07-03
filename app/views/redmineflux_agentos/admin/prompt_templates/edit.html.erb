@@ -1,2 +1,13 @@
-<h2><%= l(:label_agentos_admin_prompt_library) %></h2>
-<%= render 'redmineflux_agentos/coming_soon' %>
+<h2><%= link_to l(:label_agentos_admin_prompt_library), admin_prompt_templates_path %> &raquo; <%= @template.key %> (v<%= @template.version %>)</h2>
+
+<%= form_tag(admin_prompt_template_path(id: @template.id), method: :patch) do %>
+  <p>
+    <label><%= l(:label_agentos_content, default: 'Content') %></label><br>
+    <%= text_area_tag :content, @template.content, rows: 10, cols: 80 %>
+  </p>
+  <p class="nodata">
+    <%= l(:label_agentos_save_as_draft_hint,
+          default: 'Saving creates a new, immediately-active version — the version above is never edited in place.') %>
+  </p>
+  <%= submit_tag l(:label_agentos_save_as_new_draft, default: 'Save as new draft') %>
+<% end %>

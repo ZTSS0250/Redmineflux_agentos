@@ -1,2 +1,26 @@
 <h2><%= l(:label_agentos_dependency_dashboard) %></h2>
-<%= render 'redmineflux_agentos/coming_soon' %>
+
+<% if @edges.empty? %>
+  <p class="nodata"><%= l(:label_no_data) %></p>
+<% else %>
+  <table class="list">
+    <thead>
+      <tr>
+        <th><%= l(:label_agentos_dependent_task, default: 'Task') %></th>
+        <th><%= l(:label_agentos_depends_on, default: 'Depends on') %></th>
+        <th><%= l(:field_status) %></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @edges.each do |edge| %>
+        <% dependent = @tasks_by_id[edge.ai_task_id] %>
+        <% prerequisite = @tasks_by_id[edge.depends_on_ai_task_id] %>
+        <tr>
+          <td><%= dependent&.title || edge.ai_task_id %></td>
+          <td><%= prerequisite&.title || edge.depends_on_ai_task_id %></td>
+          <td><%= prerequisite&.status %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

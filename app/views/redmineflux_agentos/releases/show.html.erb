@@ -1,2 +1,24 @@
-<h2><%= l(:label_agentos_release_planner) %></h2>
-<%= render 'redmineflux_agentos/coming_soon' %>
+<h2><%= link_to l(:label_agentos_release_planner), agentos_releases_path(project_id: @project.id) %> &raquo; <%= @release.name %></h2>
+
+<% if @sprints.empty? %>
+  <p class="nodata"><%= l(:label_no_data) %></p>
+<% else %>
+  <table class="list">
+    <thead>
+      <tr>
+        <th><%= l(:field_name) %></th>
+        <th><%= l(:field_status) %></th>
+        <th><%= l(:label_agentos_ticket_count, default: 'Tickets') %></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @sprints.each do |sprint| %>
+        <tr>
+          <td><%= link_to sprint.name, agentos_release_sprint_path(project_id: @project.id, release_id: @release.id, id: sprint.id) %></td>
+          <td><%= sprint.status %></td>
+          <td><%= @ticket_counts_by_sprint[sprint.id] || 0 %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

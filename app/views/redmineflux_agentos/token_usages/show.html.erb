@@ -1,2 +1,47 @@
 <h2><%= l(:label_agentos_token_usage) %></h2>
-<%= render 'redmineflux_agentos/coming_soon' %>
+
+<p><strong><%= l(:label_agentos_total_tokens, default: 'Total tokens') %>:</strong> <%= number_with_delimiter(@total_tokens) %></p>
+
+<h3><%= l(:label_agentos_usage_by_agent, default: 'Usage by Agent') %></h3>
+<% if @by_agent.empty? %>
+  <p class="nodata"><%= l(:label_no_data) %></p>
+<% else %>
+  <table class="list">
+    <thead>
+      <tr>
+        <th><%= l(:field_agent, default: 'Agent') %></th>
+        <th><%= l(:label_agentos_total_tokens, default: 'Total tokens') %></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @by_agent.each do |agent_id, total| %>
+        <tr>
+          <td><%= RedminefluxAgentosAgent.find_by(id: agent_id)&.name || agent_id %></td>
+          <td><%= number_with_delimiter(total) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
+
+<h3><%= l(:label_agentos_usage_by_day, default: 'Usage by Day') %></h3>
+<% if @by_day.empty? %>
+  <p class="nodata"><%= l(:label_no_data) %></p>
+<% else %>
+  <table class="list">
+    <thead>
+      <tr>
+        <th><%= l(:field_date, default: 'Date') %></th>
+        <th><%= l(:label_agentos_total_tokens, default: 'Total tokens') %></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @by_day.each do |day, total| %>
+        <tr>
+          <td><%= day %></td>
+          <td><%= number_with_delimiter(total) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

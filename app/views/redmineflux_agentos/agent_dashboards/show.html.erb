@@ -1,2 +1,71 @@
-<h2><%= l(:label_agentos_agent_dashboard) %></h2>
-<%= render 'redmineflux_agentos/coming_soon' %>
+<h2><%= link_to l(:label_agentos_agent_dashboard), agentos_agent_dashboards_path(project_id: @project.id) %> &raquo; <%= @agent.name %></h2>
+
+<h3><%= l(:label_agentos_agent_runs, default: 'Run History') %></h3>
+<% if @agent_runs.empty? %>
+  <p class="nodata"><%= l(:label_no_data) %></p>
+<% else %>
+  <table class="list">
+    <thead>
+      <tr>
+        <th><%= l(:field_status) %></th>
+        <th><%= l(:field_attempts, default: 'Attempts') %></th>
+        <th><%= l(:field_created_on) %></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @agent_runs.each do |run| %>
+        <tr>
+          <td><%= run.status %></td>
+          <td><%= run.attempts %> / <%= run.max_attempts %></td>
+          <td><%= format_time(run.created_at) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
+
+<h3><%= l(:label_agentos_memory, default: 'Memory') %></h3>
+<% if @memories.empty? %>
+  <p class="nodata"><%= l(:label_no_data) %></p>
+<% else %>
+  <table class="list">
+    <thead>
+      <tr>
+        <th><%= l(:field_scope, default: 'Scope') %></th>
+        <th><%= l(:field_key, default: 'Key') %></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @memories.each do |memory| %>
+        <tr>
+          <td><%= memory.scope %></td>
+          <td><%= memory.key %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
+
+<h3><%= l(:label_agentos_recent_tool_calls, default: 'Recent Tool Calls') %></h3>
+<% if @recent_tool_calls.empty? %>
+  <p class="nodata"><%= l(:label_no_data) %></p>
+<% else %>
+  <table class="list">
+    <thead>
+      <tr>
+        <th><%= l(:field_tool_name, default: 'Tool') %></th>
+        <th><%= l(:field_status) %></th>
+        <th><%= l(:field_created_on) %></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @recent_tool_calls.each do |call| %>
+        <tr>
+          <td><%= call.tool_name %></td>
+          <td><%= call.status %></td>
+          <td><%= format_time(call.created_at) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

@@ -1,2 +1,27 @@
-<h2><%= l(:label_agentos_admin_prompt_library) %></h2>
-<%= render 'redmineflux_agentos/coming_soon' %>
+<h2><%= link_to l(:label_agentos_admin_prompt_library), admin_prompt_templates_path %> &raquo; <%= @template.key %></h2>
+
+<table class="list">
+  <thead>
+    <tr>
+      <th><%= l(:label_agentos_version, default: 'Version') %></th>
+      <th><%= l(:field_status) %></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @versions.each do |version| %>
+      <tr>
+        <td>v<%= version.version %></td>
+        <td><%= version.is_active? ? l(:label_agentos_active, default: 'active') : l(:label_agentos_superseded, default: 'superseded') %></td>
+        <td>
+          <%= link_to l(:button_view, default: 'View'), edit_admin_prompt_template_path(id: version.id) %>
+          <% unless version.is_active? %>
+            <%= button_to l(:label_agentos_activate, default: 'Activate'),
+                          admin_prompt_template_path(id: @template.id),
+                          method: :patch, params: { activate_version_id: version.id } %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

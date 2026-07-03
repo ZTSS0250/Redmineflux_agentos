@@ -1,2 +1,23 @@
-/* redmineflux_agentos styles — visual design/CSS is a later concern
-   per docs/PHASE1-SPECIFICATION.md; no styles implemented yet (Phase 15, rao-020). */
+/* redmineflux_agentos styles — deep visual design/polish is explicitly
+   deferred (docs/PHASE1-SPECIFICATION.md, rao-020's own QA Test Plan:
+   "Out of Scope: Visual design/CSS polish beyond functional layout").
+   This is exactly that floor: reuses Redmine core's own `.list`/`.nodata`
+   table conventions (no new visual language introduced), plus the few
+   AgentOS-specific elements (Pending Approvals panel, chat composer)
+   that have no core equivalent to inherit from. */
+
+#agentos-pending-approvals .buttons {
+  white-space: nowrap;
+}
+
+#agentos-chat-messages {
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  padding: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+#agentos-chat-messages p {
+  margin: 0.25em 0;
+}

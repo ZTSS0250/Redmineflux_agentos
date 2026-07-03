@@ -1,2 +1,16 @@
 <h2><%= l(:label_agentos_chat) %></h2>
-<%= render 'redmineflux_agentos/coming_soon' %>
+
+<div id="agentos-chat-messages">
+  <% if @messages.empty? %>
+    <p class="nodata"><%= l(:label_no_data) %></p>
+  <% else %>
+    <% @messages.each do |message| %>
+      <p><strong><%= message.role %>:</strong> <%= message.content %></p>
+    <% end %>
+  <% end %>
+</div>
+
+<%= form_tag(agentos_chat_path(project_id: @project.id), remote: true) do %>
+  <%= text_area_tag :text, nil, rows: 3, cols: 80 %>
+  <%= submit_tag l(:button_submit, default: 'Send') %>
+<% end %>

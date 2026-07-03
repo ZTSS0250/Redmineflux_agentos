@@ -1,2 +1,28 @@
 <h2><%= l(:label_agentos_cost_dashboard) %></h2>
-<%= render 'redmineflux_agentos/coming_soon' %>
+
+<p><strong><%= l(:label_agentos_total_cost, default: 'Total cost') %>:</strong> <%= number_to_currency(@total_cost) %></p>
+
+<% if @cost_trackings.empty? %>
+  <p class="nodata"><%= l(:label_no_data) %></p>
+<% else %>
+  <table class="list">
+    <thead>
+      <tr>
+        <th><%= l(:label_agentos_period, default: 'Period') %></th>
+        <th><%= l(:field_status, default: 'Provider') %></th>
+        <th><%= l(:label_agentos_total_tokens, default: 'Tokens') %></th>
+        <th><%= l(:label_agentos_total_cost, default: 'Cost') %></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @cost_trackings.each do |row| %>
+        <tr>
+          <td><%= row.period %></td>
+          <td><%= row.provider %></td>
+          <td><%= number_with_delimiter(row.total_tokens) %></td>
+          <td><%= number_to_currency(row.total_cost, unit: row.currency == 'USD' ? '$' : row.currency) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
