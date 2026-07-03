@@ -7,6 +7,10 @@ module RedminefluxAgentos
       def self.key
         :frontend
       end
+
+      def self.prompt_category
+        'ticket_generation'
+      end
     end
   end
 end

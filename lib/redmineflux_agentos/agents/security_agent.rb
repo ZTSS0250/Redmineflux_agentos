@@ -7,6 +7,10 @@ module RedminefluxAgentos
       def self.key
         :security
       end
+
+      def self.prompt_category
+        'risk_analysis'
+      end
     end
   end
 end

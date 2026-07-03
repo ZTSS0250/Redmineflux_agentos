@@ -7,6 +7,10 @@ module RedminefluxAgentos
       def self.key
         :reporting
       end
+
+      def self.prompt_category
+        'reporting'
+      end
     end
   end
 end

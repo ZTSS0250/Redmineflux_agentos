@@ -81,13 +81,17 @@ Rails.application.config.to_prepare do
     end
   end
 
-  # --- Event Bus subscribers: intentionally NOT wired up yet ---
-  # DependencyEngine::Scheduler.on_issue_closed is currently a stub that
-  # raises NotImplementedError (Phase 14, rao-019). Subscribing it now
-  # would crash on the first real issue-status-change event instead of
-  # degrading gracefully — uncomment once Phase 14 implements the handler:
-  #
-  # RedminefluxAgentos::Engine::EventBus.subscribe('issue_status_changed') do |*, payload|
-  #   RedminefluxAgentos::Engine::DependencyEngine::Scheduler.on_issue_closed(payload[:issue])
-  # end
+  # --- Event Bus subscribers (docs/PHASE2-CORE-TECHNICAL-ARCHITECTURE.md §A.7) ---
+  # Subscriber is deliberately thin/fast (rao-007 Gate 2 finding #1 —
+  # subscribers must be non-blocking, since ActiveSupport::Notifications
+  # dispatches synchronously in-process): a status-name check plus a
+  # bounded DB query for already-`waiting_on_dep` runs, not an unbounded
+  # or slow operation. `on_issue_closed` fires only when the new status is
+  # actually closed (`IssueStatus#is_closed?`) — not on every field
+  # change `update_issue`/`bulk_close_issues` (rao-018) might publish this
+  # event for.
+  RedminefluxAgentos::Engine::EventBus.subscribe('issue.status_changed') do |*, payload|
+    issue = payload[:record]
+    RedminefluxAgentos::Engine::DependencyEngine::Scheduler.on_issue_closed(issue) if issue&.status&.is_closed?
+  end
 end

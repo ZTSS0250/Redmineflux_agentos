@@ -7,6 +7,10 @@ module RedminefluxAgentos
       def self.key
         :documentation
       end
+
+      def self.prompt_category
+        'documentation'
+      end
     end
   end
 end

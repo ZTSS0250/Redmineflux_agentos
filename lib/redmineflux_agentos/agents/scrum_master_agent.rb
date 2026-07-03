@@ -7,6 +7,10 @@ module RedminefluxAgentos
       def self.key
         :scrum_master
       end
+
+      def self.prompt_category
+        'sprint_planning'
+      end
     end
   end
 end

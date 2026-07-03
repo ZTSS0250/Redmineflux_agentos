@@ -184,6 +184,19 @@ module RedminefluxAgentos
           end
           issue.save!
 
+          # Fixed during rao-019 (Phase 14) implementation: this handler
+          # changed `issue.status` directly and never published anything
+          # — the Dependency Engine's whole auto-resume mechanism
+          # (WORKFLOW.md §13, rao-019) subscribes to `issue.status_changed`
+          # to find and re-queue blocked agent_runs, so without this the
+          # feature this ticket exists to build would never actually fire
+          # through the one real code path that changes issue status.
+          if before['status_id'] != issue.status_id
+            RedminefluxAgentos::Engine::EventBus.publish('issue.status_changed', record: issue,
+                                                                                  from: before['status_id'],
+                                                                                  to: issue.status.name)
+          end
+
           {
             result: { id: issue.id, subject: issue.subject, status: issue.status.name },
             action: 'issue.updated',
@@ -260,8 +273,17 @@ module RedminefluxAgentos
             issue = Issue.find_by(id: id)
             next { id: id, success: false, error: 'not found' } unless issue
 
+            previous_status_id = issue.status_id
             issue.status = closed_status
             if issue.save
+              # Same fix as update_issue, above — bulk_close_issues is a
+              # second real code path that changes issue status and must
+              # publish the same event for the Dependency Engine to react.
+              if previous_status_id != issue.status_id
+                RedminefluxAgentos::Engine::EventBus.publish('issue.status_changed', record: issue,
+                                                                                      from: previous_status_id,
+                                                                                      to: issue.status.name)
+              end
               { id: id, success: true }
             else
               { id: id, success: false, error: issue.errors.full_messages.join(', ') }

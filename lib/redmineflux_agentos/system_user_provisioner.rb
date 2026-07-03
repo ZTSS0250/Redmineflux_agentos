@@ -24,12 +24,30 @@ module RedminefluxAgentos
   # for a background job. This has not been verified against a running
   # Redmine instance — flagged explicitly per rao-015's own caveat that
   # this ticket cannot move to `done` until tested live.
+  #
+  # Gap fixed during rao-019 (Phase 14) implementation: the original
+  # ROLE_PERMISSIONS list only granted AgentOS's own UI-level permissions
+  # (dashboard/token/cost viewing) — none of the actual Redmine **core**
+  # permissions (`:add_issues`, `:edit_project`, etc.) that
+  # `Mcp::Executor`'s Layer 1 checks (rao-018) require. As originally
+  # provisioned, the System user could never have passed Layer 1 for any
+  # of the 20 MCP tools an agent-initiated call needs — every
+  # agent-initiated write would have failed permission checks on a live
+  # instance despite Layer 2 (tool_allowlist) correctly allowing it. Fixed
+  # by adding exactly the core permissions the six tool files' `authorize:`
+  # procs check, least-privilege (no `:delete_issues`-adjacent admin
+  # permissions beyond what a tool actually gates on).
   module SystemUserProvisioner
     LOGIN = 'agentos_system'
     ROLE_NAME = 'AgentOS System'
     ROLE_PERMISSIONS = %i[
       view_agentos_dashboard create_ai_project run_ai_tasks
       view_token_usage view_cost_dashboard view_agent_logs
+      add_project edit_project manage_versions
+      add_issues edit_issues add_issue_notes manage_issue_relations delete_issues view_issues
+      edit_wiki_pages view_wiki_pages
+      manage_files
+      log_time edit_time_entries
     ].freeze
 
     class << self

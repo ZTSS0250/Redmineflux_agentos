@@ -7,6 +7,10 @@ module RedminefluxAgentos
       def self.key
         :requirement_analyst
       end
+
+      def self.prompt_category
+        'requirement_analysis'
+      end
     end
   end
 end

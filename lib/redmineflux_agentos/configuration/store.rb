@@ -25,7 +25,11 @@ module RedminefluxAgentos
         'prompt_version_pinning' => nil,
         'simulation_mode' => 'deterministic',
         'cost_rules' => 'mock-standard',
-        'token_rules' => 'fixture_declared'
+        'token_rules' => 'fixture_declared',
+        # Added during rao-019 (Phase 14) for ConcurrencyGuard — Phase 2
+        # §B.9 requires configurable caps but never enumerated the keys.
+        'global_concurrency_cap' => nil,
+        'project_concurrency_cap' => nil
       }.freeze
 
       class << self

@@ -7,6 +7,10 @@ module RedminefluxAgentos
       def self.key
         :solution_architect
       end
+
+      def self.prompt_category
+        'dependency_analysis'
+      end
     end
   end
 end

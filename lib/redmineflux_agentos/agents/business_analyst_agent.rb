@@ -7,6 +7,10 @@ module RedminefluxAgentos
       def self.key
         :business_analyst
       end
+
+      def self.prompt_category
+        'project_planning'
+      end
     end
   end
 end
