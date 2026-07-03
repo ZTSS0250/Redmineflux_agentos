@@ -1,0 +1,18 @@
+# docs/PHASE3-MOCK-AI-PROVIDER-FOUNDATION.md §7.2 — Ticket Creation
+# scenario. Filed as ticket_generation.yml (matching the category name)
+# since Ticket Generation has exactly one scenario. Unlike every other
+# fixture, this one is NOT hand-authored tool_calls content —
+# `generation_rule` tells MockProvider to build the tool_calls array from
+# TicketGenerationRule.generate(variables['epic']) instead (the
+# combinatorics of epics x stories x tasks make per-epic hand-authoring
+# impractical, per §7.2). Only usage/latency/finish_reason stay declared
+# here, exactly like every other fixture (§9's determinism guarantee
+# applies to token/cost simulation regardless of how the content itself
+# was produced).
+content: "Generated ticket set for epic '{{epic_title}}'."
+generation_rule: ticket_generation
+usage:
+  prompt_tokens: 500
+  completion_tokens: 320
+latency_ms: 250
+finish_reason: content_and_tool_calls

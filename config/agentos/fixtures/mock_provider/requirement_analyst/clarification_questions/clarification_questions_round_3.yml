@@ -1,0 +1,16 @@
+# docs/PHASE3-MOCK-AI-PROVIDER-FOUNDATION.md §7 — Clarification Questions,
+# round 3 of 3 (final round before SRS generation proceeds).
+content: |
+  One last check for "{{idea_text}}" (round {{round_number}} of 3):
+
+  Detected gaps: {{gaps_detected}}
+
+  1. Should the payroll report be exportable as PDF, CSV, or both?
+
+  If there is nothing further to add, I will proceed to generate the SRS
+  from the confirmed answers so far.
+usage:
+  prompt_tokens: 220
+  completion_tokens: 90
+latency_ms: 250
+finish_reason: content

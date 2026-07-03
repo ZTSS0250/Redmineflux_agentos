@@ -1,0 +1,18 @@
+# docs/PHASE3-MOCK-AI-PROVIDER-FOUNDATION.md §7 — Clarification Questions,
+# round 1 of 3. Multi-round scenarios are distinct fixtures (round-qualified
+# scenario_key), not conditional content within one fixture — Prompt
+# Management (§6) has no conditional/branching syntax by design.
+content: |
+  Before I can produce the SRS for "{{idea_text}}", a few gaps need clarifying
+  (round {{round_number}} of 3):
+
+  Detected gaps: {{gaps_detected}}
+
+  1. Which notification channels should be supported — email, SMS, in-app, or a combination?
+  2. Should payroll support multiple currencies, or a single organizational currency?
+  3. Is attendance tracked via biometric device integration, manual check-in, or both?
+usage:
+  prompt_tokens: 310
+  completion_tokens: 140
+latency_ms: 250
+finish_reason: content

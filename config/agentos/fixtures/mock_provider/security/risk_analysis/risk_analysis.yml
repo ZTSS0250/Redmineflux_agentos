@@ -1,0 +1,18 @@
+# docs/PHASE3-MOCK-AI-PROVIDER-FOUNDATION.md §7 — Risk Analysis scenario.
+# "Used by: Security Agent, Project Manager Agent" per §6.1 — filed under
+# security as the primary owner. content-only.
+content: |
+  Risk register for the architecture: {{architecture_doc}}, against ticket set: {{ticket_set}}
+
+  1. HIGH — Payroll calculation touching PII without field-level access
+     control could leak salary data across roles
+  2. MEDIUM — No documented retry/backoff for the notification channel
+     integration; a transient outage could silently drop approval
+     notifications
+  3. LOW — Attendance check-in has no documented handling for
+     duplicate/rapid double-submission
+usage:
+  prompt_tokens: 480
+  completion_tokens: 220
+latency_ms: 250
+finish_reason: content

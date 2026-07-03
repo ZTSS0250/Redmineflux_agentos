@@ -1,0 +1,17 @@
+# docs/PHASE3-MOCK-AI-PROVIDER-FOUNDATION.md §7 — Sprint Plan scenario.
+# Filed as sprint_planning.yml (matching the category name) since Sprint
+# Planning has exactly one scenario. content-only: sprints are
+# plugin-owned, not MCP-created (AD-1, docs/PHASE1-SPECIFICATION.md §2.3)
+# — no tool_calls here.
+content: |
+  Sprint composition derived from {{releases}} at velocity assumption {{velocity_assumption}}:
+
+  Sprint 1: Leave request submission + approval workflow
+  Sprint 2: Attendance check-in/check-out + daily summary report
+  Sprint 3: Payroll calculation engine
+  Sprint 4: Notifications + payroll/attendance reports
+usage:
+  prompt_tokens: 360
+  completion_tokens: 150
+latency_ms: 250
+finish_reason: content

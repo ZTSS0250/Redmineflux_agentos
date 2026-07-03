@@ -1,0 +1,14 @@
+# docs/PHASE3-MOCK-AI-PROVIDER-FOUNDATION.md §7 — Clarification Questions,
+# round 2 of 3.
+content: |
+  Thanks — a couple more gaps remain for "{{idea_text}}" (round {{round_number}} of 3):
+
+  Detected gaps: {{gaps_detected}}
+
+  1. Should leave balances carry over across fiscal years, or reset annually?
+  2. Do managers need a delegate/approver-backup when they are themselves on leave?
+usage:
+  prompt_tokens: 260
+  completion_tokens: 110
+latency_ms: 250
+finish_reason: content

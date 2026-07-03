@@ -1,0 +1,24 @@
+# docs/PHASE3-MOCK-AI-PROVIDER-FOUNDATION.md §7 — Release Plan scenario.
+# Filed as release_planning.yml (matching the category name) since Release
+# Planning has exactly one scenario — FixtureSelector's default
+# scenario_key (= prompt_category, when the caller doesn't pass one
+# explicitly) resolves here without any extra caller-side knowledge.
+# "Used by: Release Planner (module)" per §6.1 — not one of the 17 agents,
+# so this fixture is filed under project_manager (owns "Project/version/
+# sprint creation calls" per docs/AGENTS.md #1) as the practical default.
+content: |
+  Derived {{release_count}} release(s) from the epic set, honoring constraints: {{constraints}}
+tool_calls:
+  - tool_name: redmineflux_agentos_create_version
+    params:
+      name: "Release 1.0 — Core HR"
+      description: Leave and Attendance modules
+  - tool_name: redmineflux_agentos_create_version
+    params:
+      name: "Release 2.0 — Payroll & Reporting"
+      description: Payroll processing, notifications, and reports
+usage:
+  prompt_tokens: 400
+  completion_tokens: 180
+latency_ms: 250
+finish_reason: content_and_tool_calls

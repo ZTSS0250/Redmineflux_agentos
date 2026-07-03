@@ -1,0 +1,15 @@
+# docs/PHASE3-MOCK-AI-PROVIDER-FOUNDATION.md §7 — Progress Summary
+# scenario. Filed as reporting.yml (matching the category name) since
+# Reporting has exactly one scenario. content-only.
+content: |
+  Progress summary from dashboard snapshot: {{dashboard_snapshot}}
+
+  - Leave Management: 8/10 tickets complete
+  - Attendance Tracking: 6/12 tickets complete, 1 blocked on Database schema
+  - Payroll Processing: not yet started, queued behind Attendance
+  - Overall: on track for Sprint 3 completion
+usage:
+  prompt_tokens: 300
+  completion_tokens: 130
+latency_ms: 250
+finish_reason: content

@@ -1,0 +1,30 @@
+# docs/PHASE3-MOCK-AI-PROVIDER-FOUNDATION.md §7 — Project Plan scenario:
+# content + tool_calls (epics via create_issue).
+content: |
+  Project plan seeded for '{{project_name}}' from the approved SRS.
+  Epics: {{epics}}
+tool_calls:
+  - tool_name: redmineflux_agentos_create_issue
+    params:
+      tracker: epic
+      subject: Leave Management
+      description: Employee leave request, approval, and balance tracking
+  - tool_name: redmineflux_agentos_create_issue
+    params:
+      tracker: epic
+      subject: Attendance Tracking
+      description: Daily check-in/check-out and attendance reporting
+  - tool_name: redmineflux_agentos_create_issue
+    params:
+      tracker: epic
+      subject: Payroll Processing
+      description: Monthly payroll calculation from attendance and leave
+usage:
+  prompt_tokens: 540
+  completion_tokens: 260
+latency_ms: 250
+finish_reason: content_and_tool_calls
+memory_updates:
+  - scope: long_term
+    key: project_plan_epics
+    value: "{{epics}}"

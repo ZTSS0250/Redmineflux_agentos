@@ -1,0 +1,26 @@
+# docs/PHASE3-MOCK-AI-PROVIDER-FOUNDATION.md §7 — Dependency Detection
+# scenario. Filed as dependency_analysis.yml (matching the category name)
+# since Dependency Analysis has exactly one scenario. §7.3's default rule
+# (Database -> Backend -> API -> Frontend/UI-UX -> QA/Security ->
+# DevOps/Deployment) is applied verbatim here as canned tool_calls — a
+# real per-project graph is Phase 14's Dependency Engine (rao-019) job,
+# not this fixture's.
+content: |
+  Dependency skeleton seeded from the tier chain (Database -> Backend -> API
+  -> Frontend/UI-UX -> QA/Security -> DevOps/Deployment) against: {{ticket_set}}
+tool_calls:
+  - tool_name: redmineflux_agentos_create_issue_relation
+    params:
+      issue_id: "{{backend_ticket_id}}"
+      relation_type: blocked
+      target_issue_id: "{{database_ticket_id}}"
+  - tool_name: redmineflux_agentos_create_issue_relation
+    params:
+      issue_id: "{{api_ticket_id}}"
+      relation_type: blocked
+      target_issue_id: "{{backend_ticket_id}}"
+usage:
+  prompt_tokens: 460
+  completion_tokens: 200
+latency_ms: 250
+finish_reason: content_and_tool_calls

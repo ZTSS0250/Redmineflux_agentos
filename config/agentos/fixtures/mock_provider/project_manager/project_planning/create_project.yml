@@ -1,0 +1,17 @@
+# docs/PHASE3-MOCK-AI-PROVIDER-FOUNDATION.md §7 — Create Project scenario.
+# This is the file shape's own illustrative example, reused near-verbatim.
+content: "Created project '{{project_name}}' with modules: {{module_list}}."
+tool_calls:
+  - tool_name: redmineflux_agentos_create_project
+    params:
+      name: "{{project_name}}"
+      modules: "{{module_list}}"
+usage:
+  prompt_tokens: 420
+  completion_tokens: 180
+latency_ms: 250
+finish_reason: content_and_tool_calls
+memory_updates:
+  - scope: long_term
+    key: project_plan
+    value: "{{project_name}} created with modules {{module_list}}"

@@ -16,9 +16,20 @@ module RedminefluxAgentos
         end
 
         # @param project [Project, nil]
-        # @return the active provider instance for this project (v1: always Mock)
+        # @return the active provider instance for this project (v1: always
+        #   resolves to :mock, per docs/PHASE3-MOCK-AI-PROVIDER-FOUNDATION.md
+        #   §12's v1 gate — `active_provider` may not resolve to anything
+        #   else until a real provider ships)
         def active(project: nil)
-          raise NotImplementedError, 'Provider selection via Configuration::Store is implemented in Phase 12 (rao-017)'
+          key = RedminefluxAgentos::Configuration::Store.get('active_provider', project: project).to_s.to_sym
+          provider_class = @providers[key]
+
+          unless provider_class
+            raise RedminefluxAgentos::Configuration::InvalidProviderError,
+                  "active_provider resolved to #{key.inspect}, which is not registered"
+          end
+
+          provider_class.new
         end
 
         def registered?(key)

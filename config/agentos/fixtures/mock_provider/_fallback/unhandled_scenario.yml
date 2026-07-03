@@ -1,0 +1,16 @@
+# docs/PHASE3-MOCK-AI-PROVIDER-FOUNDATION.md §8.5 — the generic
+# "unhandled scenario" fixture. FixtureSelector falls back to this file
+# whenever a specific (agent_key, prompt_category, scenario_key) has no
+# fixture of its own — the agent run still completes (not `failed`) with
+# a human-visible, honest message, rather than surfacing an internal error
+# for what is really a coverage gap, not a system failure.
+#
+# Deliberately has NO {{variable}} placeholders: this fixture is reached
+# precisely when the caller's own category/scenario fixture doesn't exist,
+# so we cannot assume any particular variable was provided either.
+content: "This scenario is not yet covered by the Mock Provider's fixture set."
+usage:
+  prompt_tokens: 40
+  completion_tokens: 20
+latency_ms: 250
+finish_reason: content

@@ -1,0 +1,14 @@
+# docs/PHASE3-MOCK-AI-PROVIDER-FOUNDATION.md §7 — Requirement Summary
+# scenario (same category as Requirement Analysis, distinct scenario_key).
+content: |
+  Summary of confirmed requirements for "{{idea_text}}":
+
+  {{confirmed_answers}}
+
+  This summary is ready for SRS generation once the user confirms no
+  further changes are needed.
+usage:
+  prompt_tokens: 380
+  completion_tokens: 160
+latency_ms: 250
+finish_reason: content

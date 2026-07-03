@@ -1,0 +1,30 @@
+# docs/PHASE3-MOCK-AI-PROVIDER-FOUNDATION.md §7.1 — Requirement Analysis
+# scenario. content-only: a structured requirement draft, not yet an
+# approved SRS (that's the separate SRS Generation category).
+content: |
+  Requirement analysis for: "{{idea_text}}"
+
+  Functional Requirements:
+  - FR-1: Employees can submit leave requests and view approval status
+  - FR-2: Managers can approve/reject leave requests with comments
+  - FR-3: Attendance is recorded via daily check-in/check-out
+  - FR-4: Payroll is calculated monthly from attendance and leave balances
+  - FR-5: Notifications are sent on leave approval/rejection and payroll runs
+  - FR-6: Reports are generated for attendance, leave, and payroll summaries
+
+  Non-Functional Requirements:
+  - NFR-1: Payroll calculation must complete within 5 minutes for 10,000 employees
+  - NFR-2: All employee data access is role-scoped (self, manager, HR)
+
+  Business Rules:
+  - BR-1: Leave cannot be approved retroactively for a payroll period already closed
+  - BR-2: Attendance edits after submission require a manager override
+
+  Detected gaps against the checklist ({{checklist_categories}}):
+  - Notification channel (email/SMS/in-app) not specified
+  - Payroll tax/deduction rules not specified
+usage:
+  prompt_tokens: 640
+  completion_tokens: 410
+latency_ms: 250
+finish_reason: content

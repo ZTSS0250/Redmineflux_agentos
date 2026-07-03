@@ -11,6 +11,11 @@ Rails.application.config.to_prepare do
   # --- Provider registration (docs/PHASE3-MOCK-AI-PROVIDER-FOUNDATION.md §3.1) ---
   RedminefluxAgentos::Providers::Registry.register(:mock, RedminefluxAgentos::Providers::Mock::MockProvider)
 
+  # A misconfigured fixture_directory must be a loud boot-time warning,
+  # never a silent per-request failure (rao-008 Gate 3 finding #1,
+  # rao-017 Test Case #4).
+  RedminefluxAgentos::Providers::Mock::FixtureLoader.validate_directory!
+
   # --- Agent registration (docs/PHASE2-CORE-TECHNICAL-ARCHITECTURE.md §A.5) ---
   # All 17 roles register, including the reserved Code Review Agent —
   # AgentEngine::Registry itself refuses to *schedule* it (rao-011 Gate 3
